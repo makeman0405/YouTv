@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "66666526799",
+    "firebase_url": "https://youtv-e6d95.firebaseio.com",
+    "project_id": "youtv-e6d95",
+    "storage_bucket": "youtv-e6d95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66666526799:android:91ebbef2a0da5b5b25923a",
+        "android_client_info": {
+          "package_name": "com.goldenmelon.youtv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66666526799-mpo32dckstjso748l8ml2qht09978vq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcR2fSG-4YFG-jPsibof8faGwpR9beBBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66666526799-mpo32dckstjso748l8ml2qht09978vq7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

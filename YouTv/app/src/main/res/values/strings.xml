@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">YouTV</string>
+    <string name="action_show">Show</string>
+    <string name="action_search">Search</string>
+    <string name="action_login">Login</string>
+
+    <string name="playlist">PlayList</string>
+
+    <string name="popup_msg_not_supported_content_run_youtube">This content is not supported. Do you want to run it on youtube?</string>
+    <string name="title_activity_test">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>
