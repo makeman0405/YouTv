@@ -91,7 +91,9 @@ class SearchContentViewModel(application: Application) : AndroidViewModel(applic
                                         if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
                                         else "${it.ownerText.runs[0].text} • ${it.viewCountText?.runs?.get(
                                             0
-                                        )?.text}${it.viewCountText?.runs?.get(1)?.text}"
+                                        )?.text}${it.viewCountText?.runs?.let { array ->
+                                            if (array.size > 1) array[1].text else ""
+                                        }}"
 
                                     content.channelThumbnail =
                                         it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
