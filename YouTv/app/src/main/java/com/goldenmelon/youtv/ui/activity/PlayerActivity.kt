@@ -109,16 +109,17 @@ class PlayerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-//        Intent(this, MediaService::class.java).also { intent ->
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                startForegroundService(intent)
-//            } else {
-//                startService(intent)
-//            }
-//            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-//        }
-//
-//        hideSystemUi()
+        //Fixed Bug - FullScreen 상태에서 상태바, 소프트키가 보여짐. 경로: FullScreen 설정 -> 홈키 -> 재진입
+        requestedOrientation = if (!isFullScreen) {
+            showSystemUI()
+            fullscreen.setBackgroundResource(R.drawable.exo_controls_fullscreen_enter)
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        } else {
+            hideSystemUI()
+            fullscreen.setBackgroundResource(R.drawable.exo_controls_fullscreen_exit)
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        }
+
     }
 
 
