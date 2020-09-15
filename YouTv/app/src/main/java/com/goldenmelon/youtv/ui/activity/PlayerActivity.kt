@@ -86,6 +86,11 @@ class PlayerActivity : AppCompatActivity() {
         video_view.setControllerVisibilityListener {
             video_bar.visibility = it
             fullscreen.visibility = it
+
+            //Fixed Bug - VideoView Controller 가 사라질때 FullScreen 인 경우 사용에 의해 나타난 상태바와 소프트키를 사라지도록.
+            if(it != View.VISIBLE && isFullScreen) {
+                hideSystemUI()
+            }
         }
 
         registerReceivers()
