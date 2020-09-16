@@ -13,6 +13,7 @@ import at.huber.youtubeExtractor.YtFile
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
+import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_share.*
 
@@ -41,7 +42,7 @@ class ShareActivity : AppCompatActivity() {
                 vMeta: VideoMeta
             ) {
                 var isSuccess = false
-                for (itag in BaseContentListActivity.SUPPORT_ITAG_LIST) {
+                for (itag in SUPPORT_ITAG_LIST) {
                     if (ytFiles != null && ytFiles[itag] != null) {
                         PlayerActivity.startActivity(
                             tempContext, PlayContent(

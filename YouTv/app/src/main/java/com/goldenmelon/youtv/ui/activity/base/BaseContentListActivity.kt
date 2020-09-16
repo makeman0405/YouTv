@@ -1,11 +1,12 @@
 package com.goldenmelon.youtv.ui.activity.base
 
 import android.content.*
+import android.graphics.PointF
 import android.net.Uri
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import android.util.Log
 import android.util.SparseArray
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -21,6 +22,7 @@ import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
+import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
 import com.goldenmelon.youtv.utils.isNetworkAvailable
 import com.goldenmelon.youtv.utils.loadImage
 import kotlinx.android.synthetic.main.activity_main.*
@@ -80,6 +82,13 @@ open class BaseContentListActivity : AppCompatActivity() {
         }
     }
 
+    //ShortCut Drag Logic
+    var isShortCutDrag = false
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+    }
+
     override fun onResume() {
         super.onResume()
         if (MediaService.isRunning) {
@@ -93,8 +102,45 @@ open class BaseContentListActivity : AppCompatActivity() {
             }
         }
 
-        updateShortcut()
+        shortcut.setOnTouchListener { v, event ->
+            if (!isShortCutDrag) {
+                return@setOnTouchListener super.onTouchEvent(event)
+            }
+
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    v.x = v.x + (event.x) - (v.width / 2);
+                    v.y = v.y + (event.y) - (v.height / 2);
+                }
+                MotionEvent.ACTION_UP -> {
+                    prefs.setSortCutPosition(PointF(v.x, v.y))
+                    isShortCutDrag = false
+                }
+            }
+
+            return@setOnTouchListener true
+        }
+
+        shortcut.setOnClickListener {
+            prefs.getPlayContent()?.videoId?.let {
+                playContent(it)
+            }
+        }
+
+        shortcut.setOnLongClickListener {
+            isShortCutDrag = true
+            true
+        }
+
         registerReceivers()
+
+        shortcut.postDelayed(Runnable {
+            prefs.getSortCutPosition()?.let {
+                shortcut.x = it.x
+                shortcut.y = it.y
+            }
+            updateShortcut()
+        }, 100)
     }
 
     override fun onPause() {
@@ -231,13 +277,5 @@ open class BaseContentListActivity : AppCompatActivity() {
         fun dismissBottomLoading() {
             bottom_loading.visibility = View.INVISIBLE
         }
-    }
-
-    companion object {
-        //not dash
-        //18(360), 22(720)
-        //dash
-        //136(720), 137(1080)
-        val SUPPORT_ITAG_LIST = /*listOf(140)*/ listOf(18, 22)
     }
 }

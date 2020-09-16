@@ -39,3 +39,9 @@ public fun isNetworkAvailable(context: Context): Boolean {
         return nwInfo.isConnected
     }
 }
+
+//not dash
+//18(360), 22(720)
+//dash
+//136(720), 137(1080)
+val SUPPORT_ITAG_LIST = /*listOf(140)*/ listOf(18, 22)

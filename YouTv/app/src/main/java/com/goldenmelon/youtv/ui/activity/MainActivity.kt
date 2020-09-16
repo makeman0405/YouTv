@@ -2,6 +2,7 @@ package com.goldenmelon.youtv.ui.activity
 
 import android.app.Activity
 import android.content.*
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -89,30 +90,6 @@ class MainActivity : BaseContentListActivity(),
 //        windowManager.defaultDisplay.getSize(screenSize);
 //        Log.d(TAG, "screenSize: ${screenSize.toString()}")
 
-        shortcut.setOnTouchListener { _, event ->
-            if (gestureDetector.onTouchEvent(event)) {
-//                prefs.getPlayContent()?.let {
-//                    PlayerActivity.startActivity(SearchActivity@ this, it)
-//                }
-                prefs.getPlayContent()?.videoId?.let {
-                    playContent(it)
-                }
-            }
-//            else {
-//                when (event.action) {
-//                    MotionEvent.ACTION_MOVE -> {
-//                        v.x = v.x + (event.x) - (v.width /2);
-//                        v.y = v.y + (event.y) - (v.height /2);
-//                    }
-//                    MotionEvent.ACTION_UP -> {
-//                        prefs.setSortCutPosition(PointF(v.x,v.y))
-//                    }
-//                }
-//            }
-
-            return@setOnTouchListener true
-        }
-
         contentViewModel = ViewModelProviders.of(this).get(
             ContentViewModel::
             class.java
@@ -170,7 +147,7 @@ class MainActivity : BaseContentListActivity(),
 
     override fun onChannelInItemClick(item: Content) {
         item.let {
-                ChannelActivity.startActivity(this, it.ownerText, it.channelWebpage)
+            ChannelActivity.startActivity(this, it.ownerText, it.channelWebpage)
         }
     }
 

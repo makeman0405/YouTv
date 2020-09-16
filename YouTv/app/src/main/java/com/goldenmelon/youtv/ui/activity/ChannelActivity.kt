@@ -38,14 +38,6 @@ class ChannelActivity : BaseContentListActivity(),
         intent.getStringExtra("channelWebpage")
     }
 
-    private val gestureDetector: GestureDetectorCompat by lazy {
-        GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                return true
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channel)
@@ -69,18 +61,6 @@ class ChannelActivity : BaseContentListActivity(),
 
         toolbar_back.setOnClickListener {
             finish()
-        }
-
-        shortcut.setOnTouchListener { v, event ->
-            if (gestureDetector.onTouchEvent(event)) {
-//                prefs.getPlayContent()?.let {
-//                    PlayerActivity.startActivity(SearchActivity@ this, it)
-//                }
-                prefs.getPlayContent()?.videoId?.let {
-                    playContent(it)
-                }
-            }
-            return@setOnTouchListener true
         }
 
         channelViewModel = ViewModelProviders.of(this).get(

@@ -105,18 +105,6 @@ class SearchActivity : BaseContentListActivity(),
             finish()
         }
 
-        shortcut.setOnTouchListener { _, event ->
-            if (gestureDetector.onTouchEvent(event)) {
-//                prefs.getPlayContent()?.let {
-//                    PlayerActivity.startActivity(SearchActivity@ this, it)
-//                }
-                prefs.getPlayContent()?.videoId?.let {
-                    playContent(it)
-                }
-            }
-            return@setOnTouchListener true
-        }
-
         searchViewModel = ViewModelProviders.of(this).get(
             SearchContentViewModel::class.java
         )
