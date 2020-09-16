@@ -79,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
             } else {
                 hideSystemUI()
                 it.setBackgroundResource(R.drawable.exo_controls_fullscreen_exit)
-                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
             }
             isFullScreen = !isFullScreen
         }
@@ -123,7 +123,7 @@ class PlayerActivity : AppCompatActivity() {
         } else {
             hideSystemUI()
             fullscreen.setBackgroundResource(R.drawable.exo_controls_fullscreen_exit)
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         }
 
     }
