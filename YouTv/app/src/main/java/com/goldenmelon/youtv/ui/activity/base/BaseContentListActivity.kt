@@ -1,6 +1,7 @@
 package com.goldenmelon.youtv.ui.activity.base
 
 import android.content.*
+import android.graphics.Point
 import android.graphics.PointF
 import android.net.Uri
 import android.os.*
@@ -82,12 +83,29 @@ open class BaseContentListActivity : AppCompatActivity() {
         }
     }
 
+    // StatusBarHeight
+    val statusBarHeight: Int by lazy {
+        var resId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        if (resId > 0) {
+            resources.getDimensionPixelSize(resId);
+        } else {
+            0
+        }
+    }
+
+    //ScreenSize
+    val screenSize: Point by lazy {
+        var screenSize = Point()
+        windowManager.defaultDisplay.getSize(screenSize)
+        screenSize
+    }
+
     //ShortCut Drag Logic
     var isShortCutDrag = false
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-    }
+//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+//        super.onCreate(savedInstanceState, persistentState)
+//    }
 
     override fun onResume() {
         super.onResume()
@@ -102,6 +120,8 @@ open class BaseContentListActivity : AppCompatActivity() {
             }
         }
 
+        var tempX: Float
+        var tempY: Float
         shortcut.setOnTouchListener { v, event ->
             if (!isShortCutDrag) {
                 return@setOnTouchListener super.onTouchEvent(event)
@@ -109,9 +129,18 @@ open class BaseContentListActivity : AppCompatActivity() {
 
             when (event.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    v.x = v.x + (event.x) - (v.width / 2);
-                    v.y = v.y + (event.y) - (v.height / 2);
+                    tempX = v.x + (event.x) - (v.width / 2)
+                    tempY = v.y + (event.y) - (v.height / 2)
+
+                    if (0 < tempX && tempX < screenSize.x - v.width) {
+                        v.x = tempX
+                    }
+
+                    if (toolbar.height < tempY && tempY < screenSize.y - v.height - statusBarHeight) {
+                        v.y = tempY
+                    }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     prefs.setSortCutPosition(PointF(v.x, v.y))
                     isShortCutDrag = false

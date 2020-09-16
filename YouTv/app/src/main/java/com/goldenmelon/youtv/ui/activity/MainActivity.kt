@@ -2,11 +2,8 @@ package com.goldenmelon.youtv.ui.activity
 
 import android.app.Activity
 import android.content.*
-import android.graphics.PointF
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -84,11 +81,6 @@ class MainActivity : BaseContentListActivity(),
                 }
             }
         }
-
-
-//        val screenSize = Point()
-//        windowManager.defaultDisplay.getSize(screenSize);
-//        Log.d(TAG, "screenSize: ${screenSize.toString()}")
 
         contentViewModel = ViewModelProviders.of(this).get(
             ContentViewModel::
