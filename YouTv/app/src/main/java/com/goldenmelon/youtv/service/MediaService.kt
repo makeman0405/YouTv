@@ -181,9 +181,11 @@ class MediaService : Service() {
                         Toast.makeText(
                             applicationContext,
                             "Playback Error: An error has occurred(${error.type})",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_LONG
                         ).show()
-                        pause()
+
+                        sendBroadcast(Intent(ACTION_QUIT))
+                        //pause()
                     }
                 })
                 setAudioAttributes(
