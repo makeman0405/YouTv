@@ -192,6 +192,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onStop()
 
         if (mBound) unbindService(connection)
+        mBound = false
         video_view.player = null
     }
 

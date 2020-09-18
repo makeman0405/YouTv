@@ -74,6 +74,7 @@ class MediaService : Service() {
                 }
 
                 ACTION_QUIT -> {
+                    isRunning = false
                     prefs.setPlayContent(null)
                     stopSelf()
                 }
