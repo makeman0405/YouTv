@@ -5,20 +5,24 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.service.MediaService
+import com.goldenmelon.youtv.utils.shareContent
 import com.google.android.exoplayer2.Player
 import kotlinx.android.synthetic.main.activity_player.*
 
 class PlayerActivity : AppCompatActivity() {
     //Dash URL Test
     //url = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
-    var isFullScreen = false
+
+    private val playContent: PlayContent? by lazy {
+        intent.getParcelableExtra<PlayContent>("playContent")
+    }
+
+    private var isFullScreen = false
 
     //MediaService
     private var mBound: Boolean = false
@@ -41,7 +45,7 @@ class PlayerActivity : AppCompatActivity() {
                 })
 
                 it.load(
-                    intent.getParcelableExtra("playContent")
+                    playContent
                 )
             }
 
@@ -69,7 +73,14 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
-        video_title.text = intent.getParcelableExtra<PlayContent>("playContent")?.title ?: ""
+        video_title.text = playContent?.title ?: ""
+
+        share.setOnClickListener { _ ->
+            //share
+            playContent?.let {
+                shareContent(this, it.videoId)
+            }
+        }
 
         fullscreen.setOnClickListener {
             requestedOrientation = if (isFullScreen) {
@@ -86,10 +97,10 @@ class PlayerActivity : AppCompatActivity() {
 
         video_view.setControllerVisibilityListener {
             video_bar.visibility = it
-            fullscreen.visibility = it
+            fullscreen_layout.visibility = it
 
             //Fixed Bug - VideoView Controller 가 사라질때 FullScreen 인 경우 사용에 의해 나타난 상태바와 소프트키를 사라지도록함.
-            if(it != View.VISIBLE && isFullScreen) {
+            if (it != View.VISIBLE && isFullScreen) {
                 hideSystemUI()
             }
         }
@@ -118,14 +129,13 @@ class PlayerActivity : AppCompatActivity() {
         //Fixed Bug - FullScreen 상태에서 상태바, 소프트키가 보여짐. 경로: FullScreen 설정 -> 홈키 -> 재진입
         requestedOrientation = if (!isFullScreen) {
             showSystemUI()
-            fullscreen.setBackgroundResource(R.drawable.exo_controls_fullscreen_enter)
+            fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_enter)
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         } else {
             hideSystemUI()
-            fullscreen.setBackgroundResource(R.drawable.exo_controls_fullscreen_exit)
+            fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_exit)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         }
-
     }
 
 

@@ -1,6 +1,7 @@
 package com.goldenmelon.youtv.utils
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
@@ -21,9 +22,10 @@ public fun ImageView.loadImage(url: String?, requestOptions: RequestOptions) {
 }
 
 public fun isNetworkAvailable(context: Context): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val nw      = connectivityManager.activeNetwork ?: return false
+        val nw = connectivityManager.activeNetwork ?: return false
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
@@ -39,6 +41,18 @@ public fun isNetworkAvailable(context: Context): Boolean {
         return nwInfo.isConnected
     }
 }
+
+public fun shareContent(context: Context, videoId: String?) {
+    videoId?.let {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "https://youtu.be/$it")
+            type = "text/plain"
+        }
+        context.startActivity(Intent.createChooser(sendIntent, null))
+    }
+}
+
 
 //not dash
 //18(360), 22(720)
