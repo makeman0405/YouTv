@@ -60,7 +60,7 @@
 
                 <data
                     android:host="www.youtube.com"
-                    android:mimeType="text/*" />
+                    android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
