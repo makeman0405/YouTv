@@ -11,7 +11,7 @@ data class navigationEndpoint(val commandMetadata: commandMetadata)
 data class commandMetadata(val webCommandMetadata: webCommandMetadata)
 data class webCommandMetadata(val url:String)
 
-data class contentData(val contents: contents)
+data class contentData(val contents: contents?)
 data class contents(val twoColumnBrowseResultsRenderer: twoColumnBrowseResultsRenderer?)
 data class twoColumnBrowseResultsRenderer(val tabs: Array<tab>)
 

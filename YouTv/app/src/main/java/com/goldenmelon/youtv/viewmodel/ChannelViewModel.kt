@@ -58,7 +58,7 @@ class ChannelViewModel(application: Application) : AndroidViewModel(application)
             val document: Document
             try {
                 document = connection.get()
-            } catch (e:java.io.IOException) {
+            } catch (e: java.io.IOException) {
                 return list
             }
 
@@ -74,48 +74,50 @@ class ChannelViewModel(application: Application) : AndroidViewModel(application)
                         gson.fromJson(json, contentData::class.java)
 
                     //fatal
-                    if(data.contents.twoColumnBrowseResultsRenderer == null) {
-                        return list
-                    }
+                    data.contents?.twoColumnBrowseResultsRenderer?.let {
+                        val items =
+                            it.tabs[1].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].gridRenderer?.items
+                        items?.forEach { content ->
+                            content.gridVideoRenderer?.let {
+                                val content = Content(it.videoId)
+                                if (!list.contains(content)) {
+                                    content.thumbnail = it.thumbnail.thumbnails.last().url
 
-                    val items =
-                        data.contents.twoColumnBrowseResultsRenderer.tabs[1].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].gridRenderer?.items
-                    items?.forEach { content ->
-                        content.gridVideoRenderer?.let {
-                            val content = Content(it.videoId)
-                            if (!list.contains(content)) {
-                                content.thumbnail = it.thumbnail.thumbnails.last().url
-
-                                if (it.title.simpleText != null) {
-                                    content.title = it.title.simpleText
-                                } else {
-                                    if (!it.title.runs.isNullOrEmpty()) {
-                                        content.title = it.title.runs[0].text
-                                    }
-                                }
-
-                                //content.lengthText = "${it.lengthText?.simpleText}"
-
-                                content.subTitle =
-                                    if (it.publishedTimeText?.simpleText != null) "${it.viewCountText?.simpleText} • ${it.publishedTimeText.simpleText}"
-                                    else "${it.viewCountText?.runs?.get(
-                                        0
-                                    )?.text}${it.viewCountText?.runs?.let { array ->
-                                        if (array.size > 1) array[1].text else ""
-                                    }}"
-
-
-                                if (!it.thumbnailOverlays.isNullOrEmpty()) {
-                                    for (thumbnailOverlay in it.thumbnailOverlays) {
-                                        if (thumbnailOverlay.thumbnailOverlayTimeStatusRenderer != null) {
-                                            content.lengthText =
-                                                thumbnailOverlay.thumbnailOverlayTimeStatusRenderer.text.simpleText
-                                            break
+                                    if (it.title.simpleText != null) {
+                                        content.title = it.title.simpleText
+                                    } else {
+                                        if (!it.title.runs.isNullOrEmpty()) {
+                                            content.title = it.title.runs[0].text
                                         }
                                     }
-                                }
 
-                                list.add(content)
+                                    //content.lengthText = "${it.lengthText?.simpleText}"
+
+                                    content.subTitle =
+                                        if (it.publishedTimeText?.simpleText != null) "${it.viewCountText?.simpleText} • ${it.publishedTimeText.simpleText}"
+                                        else "${
+                                            it.viewCountText?.runs?.get(
+                                                0
+                                            )?.text
+                                        }${
+                                            it.viewCountText?.runs?.let { array ->
+                                                if (array.size > 1) array[1].text else ""
+                                            }
+                                        }"
+
+
+                                    if (!it.thumbnailOverlays.isNullOrEmpty()) {
+                                        for (thumbnailOverlay in it.thumbnailOverlays) {
+                                            if (thumbnailOverlay.thumbnailOverlayTimeStatusRenderer != null) {
+                                                content.lengthText =
+                                                    thumbnailOverlay.thumbnailOverlayTimeStatusRenderer.text.simpleText
+                                                break
+                                            }
+                                        }
+                                    }
+
+                                    list.add(content)
+                                }
                             }
                         }
                     }

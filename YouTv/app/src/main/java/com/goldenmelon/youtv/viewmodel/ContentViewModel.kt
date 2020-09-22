@@ -63,7 +63,7 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
             val document: Document
             try {
                 document = connection.get()
-            } catch (e:java.io.IOException) {
+            } catch (e: java.io.IOException) {
                 return list
             }
 
@@ -94,40 +94,42 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
                         gson.fromJson(json, contentData::class.java)
 
                     //fatal
-                    if(data.contents.twoColumnBrowseResultsRenderer == null) {
-                        return list
-                    }
+                    data.contents?.twoColumnBrowseResultsRenderer?.let {
+                        for (content in it.tabs[0].tabRenderer.content.richGridRenderer.contents) {
+                            content.richItemRenderer?.content?.videoRenderer?.let {
+                                var content = Content(it.videoId)
+                                if (!list.contains(content)) {
+                                    content.thumbnail = it.thumbnail.thumbnails[0].url
 
-                    for (content in data.contents.twoColumnBrowseResultsRenderer.tabs[0].tabRenderer.content.richGridRenderer.contents) {
-                        content.richItemRenderer?.content?.videoRenderer?.let {
-                            var content = Content(it.videoId)
-                            if (!list.contains(content)) {
-                                content.thumbnail = it.thumbnail.thumbnails[0].url
-
-                                if (it.title.simpleText != null) {
-                                    content.title = it.title.simpleText
-                                } else {
-                                    if (!it.title.runs.isNullOrEmpty()) {
-                                        content.title = it.title.runs[0].text
+                                    if (it.title.simpleText != null) {
+                                        content.title = it.title.simpleText
+                                    } else {
+                                        if (!it.title.runs.isNullOrEmpty()) {
+                                            content.title = it.title.runs[0].text
+                                        }
                                     }
+
+                                    content.lengthText = "${it.lengthText?.simpleText}"
+                                    content.ownerText = it.ownerText.runs[0].text
+                                    content.subTitle =
+                                        if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
+                                        else "${it.ownerText.runs[0].text} • ${
+                                            it.viewCountText?.runs?.get(
+                                                0
+                                            )?.text
+                                        }${
+                                            it.viewCountText?.runs?.let { array ->
+                                                if (array.size > 1) array[1].text else ""
+                                            }
+                                        }"
+
+                                    content.channelThumbnail =
+                                        it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
+                                    content.channelWebpage =
+                                        it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url
+
+                                    list.add(content)
                                 }
-
-                                content.lengthText = "${it.lengthText?.simpleText}"
-                                content.ownerText = it.ownerText.runs[0].text
-                                content.subTitle =
-                                    if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
-                                    else "${it.ownerText.runs[0].text} • ${it.viewCountText?.runs?.get(
-                                        0
-                                    )?.text}${it.viewCountText?.runs?.let { array ->
-                                        if (array.size > 1) array[1].text else ""
-                                    }}"
-
-                                content.channelThumbnail =
-                                    it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
-                                content.channelWebpage =
-                                    it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url
-
-                                list.add(content)
                             }
                         }
                     }
