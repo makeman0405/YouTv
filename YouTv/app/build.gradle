@@ -53,8 +53,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     //jsoup
     implementation 'org.jsoup:jsoup:1.13.1'
-    //YouTubeAndroidPlayer
-    //implementation files('libs\\YouTubeAndroidPlayerApi.jar')
     //YoutubeExtractor
     implementation 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
 
