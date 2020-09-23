@@ -235,7 +235,7 @@ open class BaseContentListActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(
                             this@BaseContentListActivity,
-                            "Please check the network", Toast.LENGTH_SHORT
+                            R.string.popup_msg_please_check_the_network, Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
