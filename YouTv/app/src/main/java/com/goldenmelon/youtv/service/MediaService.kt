@@ -141,7 +141,7 @@ class MediaService : Service() {
         )
 
         registerReceivers()
-        registerNetworkCallback()
+//        registerNetworkCallback()
     }
 
     private fun registerReceivers() {
@@ -154,18 +154,18 @@ class MediaService : Service() {
         })
     }
 
-    private fun registerNetworkCallback() {
-        val cm = getSystemService(ConnectivityManager::class.java)
-        val wifiNetworkRequest = NetworkRequest.Builder()
-            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-            .build()
-        cm.registerNetworkCallback(wifiNetworkRequest, networkCallback)
-    }
-
-    private fun unregisterNetworkCallback() {
-        val cm = getSystemService(ConnectivityManager::class.java)
-        cm.unregisterNetworkCallback(networkCallback)
-    }
+//    private fun registerNetworkCallback() {
+//        val cm = getSystemService(ConnectivityManager::class.java)
+//        val wifiNetworkRequest = NetworkRequest.Builder()
+//            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+//            .build()
+//        cm.registerNetworkCallback(wifiNetworkRequest, networkCallback)
+//    }
+//
+//    private fun unregisterNetworkCallback() {
+//        val cm = getSystemService(ConnectivityManager::class.java)
+//        cm.unregisterNetworkCallback(networkCallback)
+//    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_NOT_STICKY // START_STICKY
@@ -180,7 +180,7 @@ class MediaService : Service() {
         isRunning = false
         releasePlayer()
         unregisterReceiver(br)
-        unregisterNetworkCallback()
+//        unregisterNetworkCallback()
         prefs.setPlayContent(null)
         super.onDestroy()
     }
