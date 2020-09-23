@@ -22,6 +22,7 @@ import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
+import com.goldenmelon.youtv.utils.isWIFIConnected
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -87,7 +88,13 @@ class MediaService : Service() {
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            Toast.makeText(this@MediaService, R.string.popup_msg_connect_mobile_network, Toast.LENGTH_SHORT).show()
+            if(!isWIFIConnected(this@MediaService)) {
+                Toast.makeText(
+                    this@MediaService,
+                    R.string.popup_msg_connect_mobile_network,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         override fun onLost(network: Network?) {
