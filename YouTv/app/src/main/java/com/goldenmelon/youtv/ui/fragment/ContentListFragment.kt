@@ -82,21 +82,28 @@ class ContentListFragment : Fragment() {
             inflater.inflate(R.layout.fragment_content_list, container, false) as SwipeRefreshLayout
 
         view.setOnRefreshListener {
-            if (items.isEmpty()) {
-                when (mode) {
-                    0 -> {
-                        (viewModel as ContentViewModel).loadContents()
+            //if (items.isEmpty()) {
+            when (mode) {
+                0 -> {
+                    (viewModel as ContentViewModel).let {
+                        it.clearContents()
+                        it.loadContents()
                     }
-                    1 -> {
-                        (viewModel as SearchContentViewModel).loadContents(prefs.getLatestSearchWord())
+                }
+                1 -> {
+                    (viewModel as SearchContentViewModel).let {
+                        it.clearContents()
+                        it.loadContents(prefs.getLatestSearchWord())
                     }
-                    else -> {
-                        channelWebpage?.let {
-                            (viewModel as ChannelViewModel).loadContents(it)
-                        }
+                }
+                else -> {
+                    channelWebpage?.let {
+                        (viewModel as ChannelViewModel).clearContents()
+                        (viewModel as ChannelViewModel).loadContents(it)
                     }
                 }
             }
+            //}
 
             view.isRefreshing = false
         }
