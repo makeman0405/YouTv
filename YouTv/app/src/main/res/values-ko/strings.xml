@@ -4,6 +4,7 @@
     <string name="action_search">검색</string>
     <string name="action_login">로그인</string>
 
+    <string name="popup_msg_please_check_the_network">네트워크 상태를 확인해 주세요.</string>
     <string name="popup_msg_not_supported_content_run_youtube">지원되지 않는 동영상입니다. YouTube에서 실행하시겠습니까?</string>
 </resources>
 
