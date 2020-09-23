@@ -6,4 +6,5 @@
 
     <string name="popup_msg_please_check_the_network">Please check the network</string> 
     <string name="popup_msg_not_supported_content_run_youtube">This content is not supported. Do you want to run it on youtube?</string>
+    <string name="popup_msg_connect_mobile_network">Connect your mobile network. Data calling charges may apply depending on the plan.</string>
 </resources>

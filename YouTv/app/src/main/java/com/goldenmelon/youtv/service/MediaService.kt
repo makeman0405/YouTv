@@ -5,13 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -26,9 +25,6 @@ import com.goldenmelon.youtv.ui.activity.PlayerActivity
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
@@ -89,6 +85,16 @@ class MediaService : Service() {
         }
     }
 
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            Toast.makeText(this@MediaService, R.string.popup_msg_connect_mobile_network, Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onLost(network: Network?) {
+           //nothing
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         isRunning = true
@@ -128,6 +134,7 @@ class MediaService : Service() {
         )
 
         registerReceivers()
+        registerNetworkCallback()
     }
 
     private fun registerReceivers() {
@@ -138,6 +145,19 @@ class MediaService : Service() {
             addAction(ACTION_QUIT)
             addAction(Intent.ACTION_HEADSET_PLUG)
         })
+    }
+
+    private fun registerNetworkCallback() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val wifiNetworkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+        cm.registerNetworkCallback(wifiNetworkRequest, networkCallback)
+    }
+
+    private fun unregisterNetworkCallback() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        cm.unregisterNetworkCallback(networkCallback)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -153,6 +173,7 @@ class MediaService : Service() {
         isRunning = false
         releasePlayer()
         unregisterReceiver(br)
+        unregisterNetworkCallback()
         prefs.setPlayContent(null)
         super.onDestroy()
     }
