@@ -17,13 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".ui.activity.ChannelActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ui.activity.PlayListActivity" />
-        <activity
-            android:name=".ui.activity.TestActivity"
-            android:label="@string/title_activity_test" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -39,17 +32,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.activity.MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.activity.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.activity.LoginActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.activity.ShareActivity"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar">
@@ -63,8 +60,13 @@
                     android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.activity.SearchActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.activity.ChannelActivity"
             android:screenOrientation="portrait" />
 
         <service android:name=".service.MediaService" />

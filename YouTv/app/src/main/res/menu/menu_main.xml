@@ -3,14 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.goldenmelon.myapplication.MainActivity">
 
-    <!--
-    <item
-        android:id="@+id/action_play_list"
-        android:ic_main="@drawable/baseline_playlist_play_white_18dp"
-        android:title="@string/playlist"
-        app:showAsAction="always" />
-     -->
-
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/baseline_search_white_18dp"

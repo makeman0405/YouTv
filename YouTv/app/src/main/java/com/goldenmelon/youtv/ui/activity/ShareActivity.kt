@@ -1,8 +1,6 @@
 package com.goldenmelon.youtv.ui.activity
 
-import android.content.DialogInterface
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.SparseArray
 import android.widget.Toast
@@ -10,13 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
-import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.PlayContent
-import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.activity_share.*
-
 
 class ShareActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
