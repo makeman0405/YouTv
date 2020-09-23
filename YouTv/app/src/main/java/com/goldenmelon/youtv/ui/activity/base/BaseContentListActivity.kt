@@ -1,15 +1,16 @@
 package com.goldenmelon.youtv.ui.activity.base
 
 import android.content.*
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.PointF
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.util.SparseArray
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +20,7 @@ import at.huber.youtubeExtractor.YtFile
 import com.bumptech.glide.request.RequestOptions
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.application.App
+import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
@@ -26,7 +28,10 @@ import com.goldenmelon.youtv.ui.activity.PlayerActivity
 import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
 import com.goldenmelon.youtv.utils.isNetworkAvailable
 import com.goldenmelon.youtv.utils.loadImage
+import com.goldenmelon.youtv.utils.shareContent
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.popup_window_list_item_menu.*
+import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
 
 
 open class BaseContentListActivity : AppCompatActivity() {
@@ -285,6 +290,31 @@ open class BaseContentListActivity : AppCompatActivity() {
             .create().show()
     }
 
+    fun showListItemMenu(v: View, item: Content) {
+        val view = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
+            R.layout.popup_window_list_item_menu,
+            null
+        )
+
+        val popup = PopupWindow(
+            view,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        //share
+        view.share.setOnClickListener {
+            shareContent(this, item.videoId)
+            popup.dismiss()
+        }
+
+        popup.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        popup.elevation = 20f;
+        popup.isTouchable = true
+        popup.isFocusable = true
+        popup.isOutsideTouchable = true
+        popup.showAsDropDown(v, (-v.width * 1.3).toInt(), -v.height)
+    }
 
     inner class LoadingManager {
         fun showCenterLoading() {

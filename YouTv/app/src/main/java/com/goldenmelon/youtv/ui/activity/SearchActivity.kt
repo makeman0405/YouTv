@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
@@ -151,6 +152,10 @@ class SearchActivity : BaseContentListActivity(),
 
     override fun onUpdated() {
         loadingManager.dismissBottomLoading()
+    }
+
+    override fun onMenuInItemClick(v:View, item: Content) {
+        showListItemMenu(v, item)
     }
 
     companion object {

@@ -1,14 +1,21 @@
 package com.goldenmelon.youtv.ui.activity
 
 import android.app.Activity
-import android.content.*
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.goldenmelon.youtv.*
+import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
@@ -20,11 +27,13 @@ import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 /*
     TODO:
     유투브 메이페이지 HTML 파싱...
     이미지 얻어오기 android glide...
  */
+
 
 class MainActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
@@ -151,6 +160,10 @@ class MainActivity : BaseContentListActivity(),
 
     override fun onUpdated() {
         loadingManager.dismissBottomLoading()
+    }
+
+    override fun onMenuInItemClick(v: View, item: Content) {
+        showListItemMenu(v, item)
     }
 
     companion object {

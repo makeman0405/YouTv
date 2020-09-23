@@ -77,6 +77,11 @@ class ContentItemRecyclerViewAdapter(
             holder.live.visibility = View.INVISIBLE
         }
 
+        //channel
+        holder.menu.setOnClickListener {
+            listener?.onMenuInItemClick(it, item)
+        }
+
         //즉시 업데이트
         holder.binding.executePendingBindings()
     }
@@ -88,5 +93,6 @@ class ContentItemRecyclerViewAdapter(
         val thumbnail: ImageView = binding.itemThumbnail
         val channelThumbnail: ImageView = binding.itemChannelThumbnail
         val live: TextView = binding.itemLive
+        val menu: ImageView = binding.itemMenu
     }
 }

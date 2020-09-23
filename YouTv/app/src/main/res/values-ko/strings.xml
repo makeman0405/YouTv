@@ -4,6 +4,8 @@
     <string name="action_search">검색</string>
     <string name="action_login">로그인</string>
 
+    <string name="share">공유</string>
+
     <string name="popup_msg_please_check_the_network">네트워크 상태를 확인해 주세요.</string>
     <string name="popup_msg_not_supported_content_run_youtube">지원되지 않는 동영상입니다. YouTube에서 실행하시겠습니까?</string>
     <string name="popup_msg_connect_mobile_network">모바일 네트워크를 연결합니다. 요금제에 따라 데이터 통화료가 부과될 수 있습니다.</string>

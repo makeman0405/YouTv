@@ -180,6 +180,7 @@ class ContentListFragment : Fragment() {
         fun onChannelInItemClick(item: Content)
         fun onReachBottom()
         fun onUpdated()
+        fun onMenuInItemClick(v:View, item: Content)
     }
 
     companion object {
