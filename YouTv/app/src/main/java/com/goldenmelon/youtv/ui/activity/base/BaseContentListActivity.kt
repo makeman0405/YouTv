@@ -313,7 +313,7 @@ open class BaseContentListActivity : AppCompatActivity() {
         popup.isTouchable = true
         popup.isFocusable = true
         popup.isOutsideTouchable = true
-        popup.showAsDropDown(v, (-v.width * 1.3).toInt(), -v.height)
+        popup.showAsDropDown(v, (-v.width * 1.0).toInt(), -v.height)
     }
 
     inner class LoadingManager {
