@@ -25,10 +25,7 @@ import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
-import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
-import com.goldenmelon.youtv.utils.isNetworkAvailable
-import com.goldenmelon.youtv.utils.loadImage
-import com.goldenmelon.youtv.utils.shareContent
+import com.goldenmelon.youtv.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
@@ -313,7 +310,7 @@ open class BaseContentListActivity : AppCompatActivity() {
         popup.isTouchable = true
         popup.isFocusable = true
         popup.isOutsideTouchable = true
-        popup.showAsDropDown(v, (-v.width * 1.0).toInt(), -v.height)
+        popup.showAsDropDown(v, -convertDpToPixel(22f, this).toInt(), -convertDpToPixel(42f, this).toInt())
     }
 
     inner class LoadingManager {
