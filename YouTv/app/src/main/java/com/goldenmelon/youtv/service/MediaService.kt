@@ -214,7 +214,6 @@ class MediaService : Service() {
                         ).show()
 
                         sendBroadcast(Intent(ACTION_QUIT))
-                        //pause()
                     }
                 })
                 setAudioAttributes(
