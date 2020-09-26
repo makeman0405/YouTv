@@ -6,11 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.*
+import android.os.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -22,6 +20,7 @@ import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
+import com.goldenmelon.youtv.utils.isNetworkAvailable
 import com.goldenmelon.youtv.utils.isWIFIConnected
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
@@ -88,13 +87,7 @@ class MediaService : Service() {
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            if(!isWIFIConnected(this@MediaService)) {
-                Toast.makeText(
-                    this@MediaService,
-                    R.string.popup_msg_connect_mobile_network,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            Handler(Looper.getMainLooper()).post { player?.retry() }
         }
 
         override fun onLost(network: Network?) {
@@ -141,7 +134,7 @@ class MediaService : Service() {
         )
 
         registerReceivers()
-//        registerNetworkCallback()
+        registerNetworkCallback()
     }
 
     private fun registerReceivers() {
@@ -154,18 +147,19 @@ class MediaService : Service() {
         })
     }
 
-//    private fun registerNetworkCallback() {
-//        val cm = getSystemService(ConnectivityManager::class.java)
-//        val wifiNetworkRequest = NetworkRequest.Builder()
-//            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
-//            .build()
-//        cm.registerNetworkCallback(wifiNetworkRequest, networkCallback)
-//    }
-//
-//    private fun unregisterNetworkCallback() {
-//        val cm = getSystemService(ConnectivityManager::class.java)
-//        cm.unregisterNetworkCallback(networkCallback)
-//    }
+    private fun registerNetworkCallback() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val wifiNetworkRequest = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+        cm.registerNetworkCallback(wifiNetworkRequest, networkCallback)
+    }
+
+    private fun unregisterNetworkCallback() {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        cm.unregisterNetworkCallback(networkCallback)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_NOT_STICKY // START_STICKY
@@ -180,7 +174,7 @@ class MediaService : Service() {
         isRunning = false
         releasePlayer()
         unregisterReceiver(br)
-//        unregisterNetworkCallback()
+        unregisterNetworkCallback()
         prefs.setPlayContent(null)
         super.onDestroy()
     }
@@ -213,7 +207,7 @@ class MediaService : Service() {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        sendBroadcast(Intent(ACTION_QUIT))
+                        //sendBroadcast(Intent(ACTION_QUIT))
                     }
                 })
                 setAudioAttributes(
@@ -379,7 +373,7 @@ class MediaService : Service() {
     public fun isPlaying(): Boolean {
         var result = false
         player?.let {
-            result = it.playWhenReady && it.playbackState != ExoPlayer.STATE_ENDED
+            result = it.playWhenReady && (it.playbackState != ExoPlayer.STATE_IDLE && it.playbackState != ExoPlayer.STATE_ENDED)
         }
         return result
     }
