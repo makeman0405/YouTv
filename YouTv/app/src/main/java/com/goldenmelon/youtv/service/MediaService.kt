@@ -201,13 +201,22 @@ class MediaService : Service() {
 
                     override fun onPlayerError(error: ExoPlaybackException) {
                         super.onPlayerError(error)
-                        Toast.makeText(
-                            applicationContext,
-                            "Playback Error: An error has occurred(${error.type})",
-                            Toast.LENGTH_LONG
-                        ).show()
 
-                        //sendBroadcast(Intent(ACTION_QUIT))
+                        if(isNetworkAvailable(applicationContext)) {
+                            Toast.makeText(
+                                applicationContext,
+                                "Playback Error: An error has occurred(${error.type})",
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                            sendBroadcast(Intent(ACTION_QUIT))
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                R.string.popup_msg_please_check_the_network,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 })
                 setAudioAttributes(
