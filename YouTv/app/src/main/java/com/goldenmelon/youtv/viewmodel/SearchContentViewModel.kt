@@ -62,9 +62,9 @@ class SearchContentViewModel(application: Application) : AndroidViewModel(applic
             val elements = document.getElementsByTag("script")
 
             for (element in elements) {
-                if (element.html().contains("window[\"ytInitialData\"] = ")) {
+                if (element.html().contains("var ytInitialData = ")) {
                     val json = element.html().trim()
-                        .split("window[\"ytInitialData\"] = ")[1].split(";\n")[0]
+                        .split("var ytInitialData = ")[1].split(";")[0]
 
                     val gson = GsonBuilder().create()
                     val data =
