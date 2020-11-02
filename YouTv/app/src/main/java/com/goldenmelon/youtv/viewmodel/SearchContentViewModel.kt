@@ -64,8 +64,7 @@ class SearchContentViewModel(application: Application) : AndroidViewModel(applic
             for (element in elements) {
                 if (element.html().contains("var ytInitialData = ")) {
                     val json = element.html().trim()
-                        .split("var ytInitialData = ")[1].split(";")[0]
-
+                        .split("var ytInitialData = ")[1].split("};")[0] + "}"
                     val gson = GsonBuilder().create()
                     val data =
                         gson.fromJson(json, searchContentData::class.java)
