@@ -183,9 +183,9 @@ class MainActivity : BaseContentListActivity(),
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-        /* Login Item */
-        menu.findItem(R.id.action_login).isVisible =
-            contentViewModel.getLoginUrl()!!.value != null
+//        /* Login Item */
+//        menu.findItem(R.id.action_login).isVisible =
+//            contentViewModel.getLoginUrl()!!.value != null
         return true
     }
 
@@ -212,7 +212,7 @@ class MainActivity : BaseContentListActivity(),
                         LoginActivity::class.java
                         // todo change login url
                         // test
-                    ).putExtra("url", contentViewModel.getLoginUrl()!!.value),
+                    ).putExtra("url", /*contentViewModel.getLoginUrl()!!.value*/ "https://accounts.google.com/ServiceLogin"),
                     LOGIN_REQUEST_CODE
                 )
 

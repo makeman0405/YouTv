@@ -2,7 +2,7 @@
     <string name="app_name">YouTV</string>
 
     <string name="action_search">Search</string>
-    <string name="action_login">Login</string>
+    <string name="action_login">Account</string>
 
     <string name="share">share</string>
 

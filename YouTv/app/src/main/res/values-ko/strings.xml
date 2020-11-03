@@ -2,7 +2,7 @@
     <string name="app_name">YouTV</string>
 
     <string name="action_search">검색</string>
-    <string name="action_login">로그인</string>
+    <string name="action_login">계정</string>
 
     <string name="share">공유</string>
 
