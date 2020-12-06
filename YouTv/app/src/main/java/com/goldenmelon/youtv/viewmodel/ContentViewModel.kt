@@ -16,15 +16,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
 class ContentViewModel(application: Application) : AndroidViewModel(application) {
-    private var loginUrl: MutableLiveData<String>? = null
     private var contents: MutableLiveData<MutableList<Content>>? = null
-
-    public fun getLoginUrl(): LiveData<String>? {
-        if (loginUrl == null) {
-            loginUrl = MutableLiveData()
-        }
-        return loginUrl
-    }
 
     public fun getContents(): LiveData<MutableList<Content>>? {
         if (contents == null) {
@@ -47,7 +39,6 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
 
     private inner class YoutubeCrawlingTask() :
         AsyncTask<Void, Void, MutableList<Content>>() {
-        var tempLoginUrl: String? = null
 
         override fun doInBackground(vararg params: Void?): MutableList<Content>? {
             var list: MutableList<Content>? = contents!!.value
@@ -70,22 +61,7 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
             val elements = document.getElementsByTag("script")
 
             for (element in elements) {
-                if (element.html().contains("var ytInitialGuideData = ")) {
-                    val json = element.html().trim()
-                        .split("var ytInitialGuideData = ")[1].split(";\n")[0]
-                    val gson = GsonBuilder().create()
-                    val data =
-                        gson.fromJson(json, loginData::class.java)
-
-                    tempLoginUrl = null
-                    for (item in data.items) {
-                        var url =
-                            item.guideSigninPromoRenderer?.signInButton?.buttonRenderer?.navigationEndpoint?.commandMetadata?.webCommandMetadata?.url
-                        url?.let {
-                            tempLoginUrl = url
-                        }
-                    }
-                } else if (element.html().contains("window[\"ytInitialData\"] = ")) {
+                if (element.html().contains("window[\"ytInitialData\"] = ")) {
                     val json = element.html().trim()
                         .split("window[\"ytInitialData\"] = ")[1].split(";\n")[0]
 
@@ -141,7 +117,6 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
 
         override fun onPostExecute(list: MutableList<Content>) {
             contents?.value = list
-            loginUrl?.value = tempLoginUrl
         }
     }
 

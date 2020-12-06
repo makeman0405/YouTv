@@ -70,10 +70,6 @@ class MainActivity : BaseContentListActivity(),
             ContentViewModel::
             class.java
         )
-        contentViewModel.getLoginUrl()!!.observe(this, Observer
-        {
-            invalidateOptionsMenu()
-        })
     }
 
     override fun onResume() {
@@ -158,9 +154,6 @@ class MainActivity : BaseContentListActivity(),
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-//        /* Login Item */
-//        menu.findItem(R.id.action_login).isVisible =
-//            contentViewModel.getLoginUrl()!!.value != null
         return true
     }
 
@@ -180,17 +173,7 @@ class MainActivity : BaseContentListActivity(),
             }
 
             R.id.action_login -> {
-                //Toast.makeText(applicationContext, "Try login", Toast.LENGTH_SHORT).show()
-                startActivityForResult(
-                    Intent(
-                        this,
-                        LoginActivity::class.java
-                        // todo change login url
-                        // test
-                    ).putExtra("url", /*contentViewModel.getLoginUrl()!!.value*/ "https://accounts.google.com/ServiceLogin"),
-                    LOGIN_REQUEST_CODE
-                )
-
+                LoginActivity.startActivityForResult(this, LOGIN_REQUEST_CODE)
                 true
             }
             else -> super.onOptionsItemSelected(item)

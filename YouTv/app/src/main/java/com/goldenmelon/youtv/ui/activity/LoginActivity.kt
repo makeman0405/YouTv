@@ -1,6 +1,7 @@
 package com.goldenmelon.youtv.ui.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
 //            CookieSyncManager.createInstance(this);
 //        }
 
-        webview.loadUrl(intent.getStringExtra("url"))
+        webview.loadUrl(LOGIN_URL)
     }
 
     override fun onResume() {
@@ -114,5 +115,15 @@ class LoginActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "LoginActivity"
+        private const val LOGIN_URL = "https://accounts.google.com/ServiceLogin"
+
+        fun startActivityForResult(activity: Activity, requestCode: Int) {
+            activity.startActivityForResult(
+                Intent(
+                    activity,
+                    LoginActivity::class.java
+                ), requestCode
+            )
+        }
     }
 }
