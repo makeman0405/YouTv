@@ -34,7 +34,7 @@ import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
 open class BaseContentListActivity : AppCompatActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
     //ItemFragment OnListFragmentInteractionListener Callback method
-    val loadingManager = LoadingManager()
+    private val loadingManager = LoadingManager()
 
     //preference
     val prefs: Prefs by lazy {
@@ -44,7 +44,7 @@ open class BaseContentListActivity : AppCompatActivity(),
     //MediaService
     var mBound: Boolean = false
     var serviceRef: MediaService? = null
-    val connection = object : ServiceConnection {
+    private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceRef = (service as MediaService.MediaBinder).getService().also {
                 toolbar_play.setBackgroundResource(
@@ -65,7 +65,7 @@ open class BaseContentListActivity : AppCompatActivity(),
         }
     }
 
-    val br = object : BroadcastReceiver() {
+    private val br = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
                 MediaService.ACTION_QUIT -> {
@@ -87,7 +87,7 @@ open class BaseContentListActivity : AppCompatActivity(),
     }
 
     // StatusBarHeight
-    val statusBarHeight: Int by lazy {
+    private val statusBarHeight: Int by lazy {
         var resId = resources.getIdentifier("status_bar_height", "dimen", "android");
         if (resId > 0) {
             resources.getDimensionPixelSize(resId);
@@ -97,7 +97,7 @@ open class BaseContentListActivity : AppCompatActivity(),
     }
 
     //ScreenSize
-    val screenSize: Point by lazy {
+    private val screenSize: Point by lazy {
         var screenSize = Point()
         windowManager.defaultDisplay.getSize(screenSize)
         screenSize
@@ -105,10 +105,6 @@ open class BaseContentListActivity : AppCompatActivity(),
 
     //ShortCut Drag Logic
     var isShortCutDrag = false
-
-//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onCreate(savedInstanceState, persistentState)
-//    }
 
     open fun initUI() {}
 
@@ -125,48 +121,9 @@ open class BaseContentListActivity : AppCompatActivity(),
             }
         }
 
-        var tempX: Float
-        var tempY: Float
-        shortcut.setOnTouchListener { v, event ->
-            if (!isShortCutDrag) {
-                return@setOnTouchListener super.onTouchEvent(event)
-            }
-
-            when (event.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    tempX = v.x + (event.x) - (v.width / 2)
-                    tempY = v.y + (event.y) - (v.height / 2)
-
-                    if (0 < tempX && tempX < screenSize.x - v.width) {
-                        v.x = tempX
-                    }
-
-                    if (toolbar.height < tempY && tempY < screenSize.y - v.height - statusBarHeight) {
-                        v.y = tempY
-                    }
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    prefs.setSortCutPosition(PointF(v.x, v.y))
-                    isShortCutDrag = false
-                }
-            }
-
-            return@setOnTouchListener true
-        }
-
-        shortcut.setOnClickListener {
-            prefs.getPlayContent()?.videoId?.let {
-                playContent(it)
-            }
-        }
-
-        shortcut.setOnLongClickListener {
-            isShortCutDrag = true
-            true
-        }
-
         registerReceivers()
+
+        initShortcut()
 
         shortcut.postDelayed(Runnable {
             prefs.getSortCutPosition()?.let {
@@ -183,7 +140,7 @@ open class BaseContentListActivity : AppCompatActivity(),
         unregisterReceiver(br)
     }
 
-    fun registerReceivers() {
+    private fun registerReceivers() {
         registerReceiver(br, IntentFilter().apply {
             addAction(MediaService.ACTION_QUIT)
             addAction(MediaService.ACTION_UPDATE_PLAY_UI)
@@ -196,7 +153,7 @@ open class BaseContentListActivity : AppCompatActivity(),
         serviceRef = null
     }
 
-    fun playContent(videoId: String) {
+    private fun playContent(videoId: String) {
         val tempContext = this
         loadingManager.showCenterLoading()
         object : YouTubeExtractor(this) {
@@ -250,6 +207,51 @@ open class BaseContentListActivity : AppCompatActivity(),
         }.extract("https://www.youtube.com/watch?v=$videoId", true, true)
     }
 
+    private fun initShortcut() {
+        var tempX: Float
+        var tempY: Float
+        shortcut.apply {
+            setOnTouchListener { v, event ->
+                if (!isShortCutDrag) {
+                    return@setOnTouchListener super.onTouchEvent(event)
+                }
+
+                when (event.action) {
+                    MotionEvent.ACTION_MOVE -> {
+                        tempX = v.x + (event.x) - (v.width / 2)
+                        tempY = v.y + (event.y) - (v.height / 2)
+
+                        if (0 < tempX && tempX < screenSize.x - v.width) {
+                            v.x = tempX
+                        }
+
+                        if (toolbar.height < tempY && tempY < screenSize.y - v.height - statusBarHeight) {
+                            v.y = tempY
+                        }
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        prefs.setSortCutPosition(PointF(v.x, v.y))
+                        isShortCutDrag = false
+                    }
+                }
+
+                return@setOnTouchListener true
+            }
+
+            setOnClickListener {
+                prefs.getPlayContent()?.videoId?.let {
+                    playContent(it)
+                }
+            }
+
+            setOnLongClickListener {
+                isShortCutDrag = true
+                true
+            }
+        }
+    }
+
     fun updateShortcut() {
         shortcut.visibility = View.INVISIBLE
         if (MediaService.isRunning) {
@@ -290,7 +292,7 @@ open class BaseContentListActivity : AppCompatActivity(),
             .create().show()
     }
 
-    fun showListItemMenu(v: View, item: Content) {
+    private fun showListItemMenu(v: View, item: Content) {
         val popup = PopupWindow(
             LayoutInflater.from(applicationContext).inflate(
                 R.layout.popup_window_list_item_menu,
