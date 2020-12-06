@@ -11,7 +11,6 @@ class SplashActivity : AppCompatActivity() {
 
         Handler().postDelayed(
             {
-                //throw RuntimeException("Test Crash")
                 MainActivity.startActivity(this)
                 overridePendingTransition(0, 0);
                 finish()
