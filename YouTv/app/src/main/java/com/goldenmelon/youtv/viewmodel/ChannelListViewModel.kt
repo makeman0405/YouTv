@@ -57,9 +57,9 @@ class ChannelListViewModel(application: Application) : AndroidViewModel(applicat
             val elements = document.getElementsByTag("script")
 
             for (element in elements) {
-                if (element.html().contains("window[\"ytInitialData\"] = ")) {
-                    val json = element.html().trim()
-                        .split("window[\"ytInitialData\"] = ")[1].split(";\n")[0]
+                if (element.html().contains("var ytInitialData = ")) {
+                    var json = element.html().trim()
+                        .split("var ytInitialData = ")[1].split("};")[0] + "}"
 
                     val gson = GsonBuilder().create()
                     val data =
