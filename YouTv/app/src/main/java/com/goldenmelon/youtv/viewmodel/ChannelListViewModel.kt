@@ -34,8 +34,8 @@ class ChannelListViewModel(application: Application) : AndroidViewModel(applicat
     private inner class YoutubeCrawlingTask(private val channelWebpage: String) :
         AsyncTask<Void, Void, MutableList<Content>>() {
 
-        override fun doInBackground(vararg params: Void?): MutableList<Content>? {
-            var list: MutableList<Content>? = contents!!.value
+        override fun doInBackground(vararg params: Void?): MutableList<Content> {
+            var list: MutableList<Content>? = contents.value
             if (list == null) {
                 list = mutableListOf<Content>()
             }
@@ -71,21 +71,21 @@ class ChannelListViewModel(application: Application) : AndroidViewModel(applicat
                             it.tabs[1].tabRenderer.content.sectionListRenderer.contents[0].itemSectionRenderer.contents[0].gridRenderer?.items
                         items?.forEach { content ->
                             content.gridVideoRenderer?.let {
-                                val content = Content(it.videoId)
-                                if (!list.contains(content)) {
-                                    content.thumbnail = it.thumbnail.thumbnails.last().url
+                                val tempContent = Content(it.videoId)
+                                if (!list.contains(tempContent)) {
+                                    tempContent.thumbnail = it.thumbnail.thumbnails.last().url
 
                                     if (it.title.simpleText != null) {
-                                        content.title = it.title.simpleText
+                                        tempContent.title = it.title.simpleText
                                     } else {
                                         if (!it.title.runs.isNullOrEmpty()) {
-                                            content.title = it.title.runs[0].text
+                                            tempContent.title = it.title.runs[0].text
                                         }
                                     }
 
                                     //content.lengthText = "${it.lengthText?.simpleText}"
 
-                                    content.subTitle =
+                                    tempContent.subTitle =
                                         if (it.publishedTimeText?.simpleText != null) "${it.viewCountText?.simpleText} • ${it.publishedTimeText.simpleText}"
                                         else "${
                                             it.viewCountText?.runs?.get(
@@ -101,14 +101,14 @@ class ChannelListViewModel(application: Application) : AndroidViewModel(applicat
                                     if (!it.thumbnailOverlays.isNullOrEmpty()) {
                                         for (thumbnailOverlay in it.thumbnailOverlays) {
                                             if (thumbnailOverlay.thumbnailOverlayTimeStatusRenderer != null) {
-                                                content.lengthText =
+                                                tempContent.lengthText =
                                                     thumbnailOverlay.thumbnailOverlayTimeStatusRenderer.text.simpleText
                                                 break
                                             }
                                         }
                                     }
 
-                                    list.add(content)
+                                    list.add(tempContent)
                                 }
                             }
                         }
@@ -120,7 +120,7 @@ class ChannelListViewModel(application: Application) : AndroidViewModel(applicat
         }
 
         override fun onPostExecute(list: MutableList<Content>) {
-            contents?.value = list
+            contents.value = list
         }
     }
 

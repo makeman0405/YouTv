@@ -33,8 +33,8 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
     private inner class YoutubeCrawlingTask(private val keyword: String) :
         AsyncTask<Void, Void, MutableList<Content>>() {
 
-        override fun doInBackground(vararg params: Void?): MutableList<Content>? {
-            var list: MutableList<Content>? = contents!!.value
+        override fun doInBackground(vararg params: Void?): MutableList<Content> {
+            var list: MutableList<Content>? = contents.value
             if (list == null) {
                 list = mutableListOf<Content>()
             }
@@ -110,7 +110,7 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
         }
 
         override fun onPostExecute(list: MutableList<Content>) {
-            contents?.value = list
+            contents.value = list
         }
     }
 

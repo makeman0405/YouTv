@@ -4,13 +4,10 @@ import android.app.Application
 import android.os.AsyncTask
 import android.webkit.CookieManager
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.MAIN_URL
 import com.goldenmelon.youtv.utils.json.contentData
-import com.goldenmelon.youtv.utils.json.loginData
-import com.goldenmelon.youtv.utils.json.tab
 import com.google.gson.GsonBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,8 +30,8 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
     private inner class YoutubeCrawlingTask() :
         AsyncTask<Void, Void, MutableList<Content>>() {
 
-        override fun doInBackground(vararg params: Void?): MutableList<Content>? {
-            var list: MutableList<Content>? = contents!!.value
+        override fun doInBackground(vararg params: Void?): MutableList<Content> {
+            var list: MutableList<Content>? = contents.value
             if (list == null) {
                 list = mutableListOf<Content>()
             }
@@ -66,21 +63,21 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
                     data.contents?.twoColumnBrowseResultsRenderer?.let {
                         for (content in it.tabs[0].tabRenderer.content.richGridRenderer.contents) {
                             content.richItemRenderer?.content?.videoRenderer?.let {
-                                var content = Content(it.videoId)
-                                if (!list.contains(content)) {
-                                    content.thumbnail = it.thumbnail.thumbnails[0].url
+                                var tempContent = Content(it.videoId)
+                                if (!list.contains(tempContent)) {
+                                    tempContent.thumbnail = it.thumbnail.thumbnails[0].url
 
                                     if (it.title.simpleText != null) {
-                                        content.title = it.title.simpleText
+                                        tempContent.title = it.title.simpleText
                                     } else {
                                         if (!it.title.runs.isNullOrEmpty()) {
-                                            content.title = it.title.runs[0].text
+                                            tempContent.title = it.title.runs[0].text
                                         }
                                     }
 
-                                    content.lengthText = "${it.lengthText?.simpleText}"
-                                    content.ownerText = it.ownerText.runs[0].text
-                                    content.subTitle =
+                                    tempContent.lengthText = "${it.lengthText?.simpleText}"
+                                    tempContent.ownerText = it.ownerText.runs[0].text
+                                    tempContent.subTitle =
                                         if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
                                         else "${it.ownerText.runs[0].text} • ${
                                             it.viewCountText?.runs?.get(
@@ -92,12 +89,12 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
                                             }
                                         }"
 
-                                    content.channelThumbnail =
+                                    tempContent.channelThumbnail =
                                         it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
-                                    content.channelWebpage =
+                                    tempContent.channelWebpage =
                                         it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url
 
-                                    list.add(content)
+                                    list.add(tempContent)
                                 }
                             }
                         }
@@ -109,7 +106,7 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
         }
 
         override fun onPostExecute(list: MutableList<Content>) {
-            contents?.value = list
+            contents.value = list
         }
     }
 
