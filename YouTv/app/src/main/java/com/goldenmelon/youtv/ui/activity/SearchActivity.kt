@@ -17,19 +17,12 @@ import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
 import kotlinx.android.synthetic.main.activity_search.*
 
-
-/*
-    TODO:
-    유투브 메이페이지 HTML 파싱...
-    이미지 얻어오기 android glide...
- */
-
 class SearchActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
 
     private lateinit var searchViewModel: SearchContentViewModel
 
-    private var contentListFragment: ContentListFragment? = null
+    private lateinit var contentListFragment: ContentListFragment
 
     private var searchWord: String? = null
 

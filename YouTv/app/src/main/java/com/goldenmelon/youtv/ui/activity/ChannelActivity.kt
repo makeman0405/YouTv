@@ -22,7 +22,7 @@ class ChannelActivity : BaseContentListActivity(),
 
     private lateinit var channelViewModel: ChannelViewModel
 
-    private var contentListFragment: ContentListFragment? = null
+    private lateinit var contentListFragment: ContentListFragment
 
     private val ownerText by lazy {
         intent.getStringExtra("ownerText")
@@ -75,7 +75,7 @@ class ChannelActivity : BaseContentListActivity(),
         when (fragment) {
             is ContentListFragment -> {
                 contentListFragment = fragment
-                contentListFragment!!.channelWebpage = channelWebpage
+                contentListFragment.channelWebpage = channelWebpage
             }
         }
     }

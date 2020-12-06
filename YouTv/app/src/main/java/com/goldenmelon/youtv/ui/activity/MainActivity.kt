@@ -20,7 +20,7 @@ class MainActivity : BaseContentListActivity(),
 
     private lateinit var contentViewModel: ContentViewModel
 
-    private var contentListFragment: ContentListFragment? = null
+    private lateinit var contentListFragment: ContentListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +75,7 @@ class MainActivity : BaseContentListActivity(),
 
         return super.onOptionsItemSelected(item)
     }
-    
+
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is ContentListFragment) {
             contentListFragment = fragment
