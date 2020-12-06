@@ -87,9 +87,10 @@ class MainActivity : BaseContentListActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LOGIN_REQUEST_CODE) {
             // Make sure the request was successful
-            if (resultCode == Activity.RESULT_OK) {
-                contentListFragment.refreshData()
-            }
+            //메인 화면 리스트 리플레쉬는 사용자에게 맞긴다.
+//            if (resultCode == Activity.RESULT_OK) {
+//                contentListFragment.refreshData()
+//            }
         }
     }
 
