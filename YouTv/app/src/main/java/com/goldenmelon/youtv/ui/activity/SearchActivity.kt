@@ -3,12 +3,8 @@ package com.goldenmelon.youtv.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
@@ -37,14 +33,6 @@ class SearchActivity : BaseContentListActivity(),
 
     private var searchWord: String? = null
 
-    private val gestureDetector: GestureDetectorCompat by lazy {
-        GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                return true
-            }
-        })
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -54,22 +42,13 @@ class SearchActivity : BaseContentListActivity(),
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         prefs.getLatestSearchWord().let {
-            if (!it.isBlank()) toolbar_searchView.setQuery(it, false)
+            if (it.isNotBlank()) toolbar_searchView.setQuery(it, false)
         }
 
         toolbar_searchView?.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText.isNullOrBlank()) {
-//                        Toast.makeText(applicationContext, "open windowPopup", Toast.LENGTH_SHORT)
-//                            .show()
-                        //showSearchedWordListPopup()
-                    } else {
-//                        Toast.makeText(applicationContext, "close windowPopup", Toast.LENGTH_SHORT)
-//                            .show()
-                        //dismissSearchedWordListPopup()
-                    }
-                    return false
+                    TODO("Not yet implemented")
                 }
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -89,7 +68,6 @@ class SearchActivity : BaseContentListActivity(),
         }
 
         toolbar_play.setOnClickListener {
-            //Toast.makeText(applicationContext, "actionPlay", Toast.LENGTH_SHORT).show()
             serviceRef?.let {
                 if (it.isPlaying()) {
                     it.pause()
@@ -127,13 +105,6 @@ class SearchActivity : BaseContentListActivity(),
     }
 
     override fun onItemClick(item: Content) {
-//        prefs.getPlayContent()?.let { it ->
-//            if (it.videoId == item.videoId) {
-//                PlayerActivity.startActivity(SearchActivity@ this, it)
-//            } else {
-//                playContent(item.videoId)
-//            }
-//        } ?: playContent(item.videoId)
         playContent(item.videoId)
     }
 
@@ -145,23 +116,21 @@ class SearchActivity : BaseContentListActivity(),
     }
 
     override fun onReachBottom() {
-//not support
-//        loadingManager.showBottomLoading()
-//        searchViewModel.loadContents("아이유")
+        //not working...
     }
 
     override fun onUpdated() {
         loadingManager.dismissBottomLoading()
     }
 
-    override fun onMenuInItemClick(v:View, item: Content) {
+    override fun onMenuInItemClick(v: View, item: Content) {
         showListItemMenu(v, item)
     }
 
     companion object {
         const val TAG = "SearchActivity"
 
-        public fun startActivity(context: Context) {
+        fun startActivity(context: Context) {
             context.startActivity(
                 Intent(
                     context,
