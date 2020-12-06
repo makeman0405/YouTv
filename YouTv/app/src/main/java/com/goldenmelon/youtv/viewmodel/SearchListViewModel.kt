@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.AsyncTask
 import android.webkit.CookieManager
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.MAIN_URL
@@ -16,15 +15,8 @@ import org.jsoup.nodes.Document
 
 class SearchListViewModel(application: Application) : AndroidViewModel(application),
     ContentListViewModel {
-    private var contents: MutableLiveData<MutableList<Content>>? = null
-
-    override fun getContents(param: String?): LiveData<MutableList<Content>>? {
-        if (contents == null) {
-            contents = MutableLiveData()
-            loadContents(param)
-        }
-
-        return contents
+    override val contents: MutableLiveData<MutableList<Content>> by lazy {
+        MutableLiveData<MutableList<Content>>()
     }
 
     override fun loadContents(param: String?) {
@@ -33,8 +25,9 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    override fun clearContents() {
-        contents!!.value = mutableListOf<Content>()
+    override fun refresh(param: String?) {
+        clearContents()
+        loadContents(param)
     }
 
     private inner class YoutubeCrawlingTask(private val keyword: String) :

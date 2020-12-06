@@ -17,25 +17,17 @@ import org.jsoup.nodes.Document
 
 class MainListViewModel(application: Application) : AndroidViewModel(application),
     ContentListViewModel {
-    private var contents: MutableLiveData<MutableList<Content>>? = null
-
-    override fun getContents(param: String?): LiveData<MutableList<Content>>? {
-        if (contents == null) {
-            contents = MutableLiveData()
-            loadContents()
-        }
-
-        return contents
+    override val contents: MutableLiveData<MutableList<Content>> by lazy {
+        MutableLiveData<MutableList<Content>>()
     }
 
     override fun loadContents(param: String?) {
-        if (contents != null) {
-            YoutubeCrawlingTask().execute()
-        }
+        YoutubeCrawlingTask().execute()
     }
 
-    override fun clearContents() {
-        contents!!.value = mutableListOf<Content>()
+    override fun refresh(param: String?) {
+        clearContents()
+        loadContents()
     }
 
     private inner class YoutubeCrawlingTask() :
