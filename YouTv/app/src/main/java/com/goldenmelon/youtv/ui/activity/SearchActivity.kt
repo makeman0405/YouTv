@@ -88,7 +88,6 @@ class SearchActivity : BaseContentListActivity(),
 
     override fun onResume() {
         super.onResume()
-
         toolbar_play.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
