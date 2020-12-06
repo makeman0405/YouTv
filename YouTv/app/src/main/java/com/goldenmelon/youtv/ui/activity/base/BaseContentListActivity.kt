@@ -23,13 +23,16 @@ import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
+import com.goldenmelon.youtv.ui.activity.ChannelActivity
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
+import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
 
-open class BaseContentListActivity : AppCompatActivity() {
+open class BaseContentListActivity : AppCompatActivity(),
+    ContentListFragment.OnListFragmentInteractionListener {
     //ItemFragment OnListFragmentInteractionListener Callback method
     val loadingManager = LoadingManager()
 
@@ -334,5 +337,28 @@ open class BaseContentListActivity : AppCompatActivity() {
         fun dismissBottomLoading() {
             bottom_loading.visibility = View.INVISIBLE
         }
+    }
+
+    //ItemFragment OnListFragmentInteractionListener Callback method
+    override fun onItemClick(item: Content) {
+        playContent(item.videoId)
+    }
+
+    override fun onChannelInItemClick(item: Content) {
+        item.let {
+            ChannelActivity.startActivity(this, it.ownerText, it.channelWebpage)
+        }
+    }
+
+    override fun onReachBottom() {
+        loadingManager.showBottomLoading()
+    }
+
+    override fun onUpdated() {
+        loadingManager.dismissBottomLoading()
+    }
+
+    override fun onMenuInItemClick(v: View, item: Content) {
+        showListItemMenu(v, item)
     }
 }

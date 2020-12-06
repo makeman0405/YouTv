@@ -5,19 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
-import com.goldenmelon.youtv.ui.fragment.ContentListType
+import com.goldenmelon.youtv.viewmodel.ChannelListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
 import kotlinx.android.synthetic.main.activity_search.*
 
-class ChannelActivity : BaseContentListActivity(),
-    ContentListFragment.OnListFragmentInteractionListener {
+class ChannelActivity : BaseContentListActivity() {
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -71,31 +71,12 @@ class ChannelActivity : BaseContentListActivity(),
         when (fragment) {
             is ContentListFragment -> {
                 contentListFragment = fragment
-                contentListFragment.type = ContentListType.Channel
+                contentListFragment.viewModel = ViewModelProviders.of(this).get(
+                    ChannelListViewModel::class.java
+                )
                 contentListFragment.channelWebpage = channelWebpage
             }
         }
-    }
-
-    //ItemFragment OnListFragmentInteractionListener Callback method
-    override fun onItemClick(item: Content) {
-        playContent(item.videoId)
-    }
-
-    override fun onChannelInItemClick(item: Content) {
-        // not working
-    }
-
-    override fun onReachBottom() {
-        // not working
-    }
-
-    override fun onUpdated() {
-        loadingManager.dismissBottomLoading()
-    }
-
-    override fun onMenuInItemClick(v:View, item: Content) {
-        showListItemMenu(v, item)
     }
 
     companion object {

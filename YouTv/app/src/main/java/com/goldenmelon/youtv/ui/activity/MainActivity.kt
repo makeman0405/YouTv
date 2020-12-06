@@ -8,18 +8,14 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
-import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
-import com.goldenmelon.youtv.ui.fragment.ContentListType
 import com.goldenmelon.youtv.viewmodel.MainListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
-
-    private lateinit var mainListViewModel: MainListViewModel
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -44,11 +40,6 @@ class MainActivity : BaseContentListActivity(),
                 }
             }
         }
-
-        mainListViewModel = ViewModelProviders.of(this).get(
-            MainListViewModel::
-            class.java
-        )
     }
 
     override fun onResume() {
@@ -84,7 +75,7 @@ class MainActivity : BaseContentListActivity(),
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is ContentListFragment) {
             contentListFragment = fragment
-            contentListFragment.type = ContentListType.Main
+            contentListFragment.viewModel =  ViewModelProviders.of(this).get(MainListViewModel::class.java)
         }
     }
 
@@ -97,36 +88,9 @@ class MainActivity : BaseContentListActivity(),
         if (requestCode == LOGIN_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK) {
-                mainListViewModel.let {
-                    it.clearContents()
-                    it.loadContents()
-                }
+                contentListFragment.refreshViewModel()
             }
         }
-    }
-
-    //ItemFragment OnListFragmentInteractionListener Callback method
-    override fun onItemClick(item: Content) {
-        playContent(item.videoId)
-    }
-
-    override fun onChannelInItemClick(item: Content) {
-        item.let {
-            ChannelActivity.startActivity(this, it.ownerText, it.channelWebpage)
-        }
-    }
-
-    override fun onReachBottom() {
-        loadingManager.showBottomLoading()
-        mainListViewModel.loadContents()
-    }
-
-    override fun onUpdated() {
-        loadingManager.dismissBottomLoading()
-    }
-
-    override fun onMenuInItemClick(v: View, item: Content) {
-        showListItemMenu(v, item)
     }
 
     companion object {

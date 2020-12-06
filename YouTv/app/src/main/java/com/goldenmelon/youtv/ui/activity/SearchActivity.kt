@@ -12,7 +12,6 @@ import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
-import com.goldenmelon.youtv.ui.fragment.ContentListType
 import com.goldenmelon.youtv.viewmodel.SearchListViewModel
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
@@ -20,8 +19,6 @@ import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
-
-    private lateinit var searchViewModel: SearchListViewModel
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -52,9 +49,8 @@ class SearchActivity : BaseContentListActivity(),
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (!query.isNullOrBlank()) {
                         if (searchWord.isNullOrBlank() || !searchWord.equals(query)) {
-                            searchViewModel.clearContents()
-                            searchViewModel.loadContents(query)
                             prefs.setLatestSearchWord(query)
+                            contentListFragment.refreshViewModel()
                             searchWord = query
                         }
                     }
@@ -78,10 +74,6 @@ class SearchActivity : BaseContentListActivity(),
         toolbar_back.setOnClickListener {
             finish()
         }
-
-        searchViewModel = ViewModelProviders.of(this).get(
-            SearchListViewModel::class.java
-        )
     }
 
     override fun onResume() {
@@ -97,32 +89,9 @@ class SearchActivity : BaseContentListActivity(),
         when (fragment) {
             is ContentListFragment -> {
                 contentListFragment = fragment
-                contentListFragment.type = ContentListType.Search
+                contentListFragment.viewModel =  ViewModelProviders.of(this).get(SearchListViewModel::class.java)
             }
         }
-    }
-
-    override fun onItemClick(item: Content) {
-        playContent(item.videoId)
-    }
-
-    //ItemFragment OnListFragmentInteractionListener Callback method
-    override fun onChannelInItemClick(item: Content) {
-        item.let {
-            ChannelActivity.startActivity(this, it.ownerText, it.channelWebpage)
-        }
-    }
-
-    override fun onReachBottom() {
-        //not working...
-    }
-
-    override fun onUpdated() {
-        loadingManager.dismissBottomLoading()
-    }
-
-    override fun onMenuInItemClick(v: View, item: Content) {
-        showListItemMenu(v, item)
     }
 
     companion object {
