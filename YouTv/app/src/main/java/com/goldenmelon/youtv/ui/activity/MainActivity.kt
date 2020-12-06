@@ -55,6 +55,27 @@ class MainActivity : BaseContentListActivity(),
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_search -> {
+                SearchActivity.startActivity(this)
+                return true
+            }
+
+            R.id.action_login -> {
+                LoginActivity.startActivityForResult(this, LOGIN_REQUEST_CODE)
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+    
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is ContentListFragment) {
             contentListFragment = fragment
@@ -114,26 +135,5 @@ class MainActivity : BaseContentListActivity(),
                 context.startActivity(it)
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> {
-                SearchActivity.startActivity(this)
-                return true
-            }
-
-            R.id.action_login -> {
-                LoginActivity.startActivityForResult(this, LOGIN_REQUEST_CODE)
-                return true
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 }
