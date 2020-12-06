@@ -17,7 +17,7 @@ import com.google.gson.GsonBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class ChannelViewModel(application: Application) : AndroidViewModel(application) {
+class ChanneListViewModel(application: Application) : AndroidViewModel(application) {
     private var contents: MutableLiveData<MutableList<Content>>? = null
 
     public fun getContents(channelWebpage: String): LiveData<MutableList<Content>>? {

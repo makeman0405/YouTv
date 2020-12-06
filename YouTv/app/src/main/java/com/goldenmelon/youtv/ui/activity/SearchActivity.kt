@@ -13,7 +13,7 @@ import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.ui.fragment.ContentListType
-import com.goldenmelon.youtv.viewmodel.SearchContentViewModel
+import com.goldenmelon.youtv.viewmodel.SearchListViewModel
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
 import kotlinx.android.synthetic.main.activity_search.*
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 class SearchActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
 
-    private lateinit var searchViewModel: SearchContentViewModel
+    private lateinit var searchViewModel: SearchListViewModel
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -80,7 +80,7 @@ class SearchActivity : BaseContentListActivity(),
         }
 
         searchViewModel = ViewModelProviders.of(this).get(
-            SearchContentViewModel::class.java
+            SearchListViewModel::class.java
         )
     }
 

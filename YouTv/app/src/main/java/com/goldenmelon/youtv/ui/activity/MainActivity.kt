@@ -13,13 +13,13 @@ import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.ui.fragment.ContentListType
-import com.goldenmelon.youtv.viewmodel.ContentViewModel
+import com.goldenmelon.youtv.viewmodel.MainListViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
 
-    private lateinit var contentViewModel: ContentViewModel
+    private lateinit var mainListViewModel: MainListViewModel
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -45,8 +45,8 @@ class MainActivity : BaseContentListActivity(),
             }
         }
 
-        contentViewModel = ViewModelProviders.of(this).get(
-            ContentViewModel::
+        mainListViewModel = ViewModelProviders.of(this).get(
+            MainListViewModel::
             class.java
         )
     }
@@ -97,7 +97,7 @@ class MainActivity : BaseContentListActivity(),
         if (requestCode == LOGIN_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK) {
-                contentViewModel.let {
+                mainListViewModel.let {
                     it.clearContents()
                     it.loadContents()
                 }
@@ -118,7 +118,7 @@ class MainActivity : BaseContentListActivity(),
 
     override fun onReachBottom() {
         loadingManager.showBottomLoading()
-        contentViewModel.loadContents()
+        mainListViewModel.loadContents()
     }
 
     override fun onUpdated() {

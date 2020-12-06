@@ -15,10 +15,11 @@ import com.google.gson.GsonBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class ContentViewModel(application: Application) : AndroidViewModel(application) {
+class MainListViewModel(application: Application) : AndroidViewModel(application),
+    ContentListViewModel {
     private var contents: MutableLiveData<MutableList<Content>>? = null
 
-    public fun getContents(): LiveData<MutableList<Content>>? {
+    override fun getContents(param: String?): LiveData<MutableList<Content>>? {
         if (contents == null) {
             contents = MutableLiveData()
             loadContents()
@@ -27,13 +28,13 @@ class ContentViewModel(application: Application) : AndroidViewModel(application)
         return contents
     }
 
-    public fun loadContents() {
+    override fun loadContents(param: String?) {
         if (contents != null) {
             YoutubeCrawlingTask().execute()
         }
     }
 
-    public fun clearContents() {
+    override fun clearContents() {
         contents!!.value = mutableListOf<Content>()
     }
 

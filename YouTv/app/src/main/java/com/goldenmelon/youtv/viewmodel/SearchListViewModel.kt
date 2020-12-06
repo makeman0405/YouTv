@@ -14,25 +14,26 @@ import com.google.gson.GsonBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class SearchContentViewModel(application: Application) : AndroidViewModel(application) {
+class SearchListViewModel(application: Application) : AndroidViewModel(application),
+    ContentListViewModel {
     private var contents: MutableLiveData<MutableList<Content>>? = null
 
-    public fun getContents(keyword: String): LiveData<MutableList<Content>>? {
+    override fun getContents(param: String?): LiveData<MutableList<Content>>? {
         if (contents == null) {
             contents = MutableLiveData()
-            loadContents(keyword)
+            loadContents(param)
         }
 
         return contents
     }
 
-    public fun loadContents(keyword: String) {
-        if (!keyword.isNullOrBlank()) {
-            YoutubeCrawlingTask(keyword).execute()
+    override fun loadContents(param: String?) {
+        if (!param.isNullOrBlank()) {
+            YoutubeCrawlingTask(param).execute()
         }
     }
 
-    public fun clearContents() {
+    override fun clearContents() {
         contents!!.value = mutableListOf<Content>()
     }
 
@@ -55,7 +56,7 @@ class SearchContentViewModel(application: Application) : AndroidViewModel(applic
             val document: Document
             try {
                 document = connection.get()
-            } catch (e:java.io.IOException) {
+            } catch (e: java.io.IOException) {
                 return list
             }
 
@@ -88,11 +89,15 @@ class SearchContentViewModel(application: Application) : AndroidViewModel(applic
                                     content.ownerText = it.ownerText.runs[0].text
                                     content.subTitle =
                                         if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
-                                        else "${it.ownerText.runs[0].text} • ${it.viewCountText?.runs?.get(
-                                            0
-                                        )?.text}${it.viewCountText?.runs?.let { array ->
-                                            if (array.size > 1) array[1].text else ""
-                                        }}"
+                                        else "${it.ownerText.runs[0].text} • ${
+                                            it.viewCountText?.runs?.get(
+                                                0
+                                            )?.text
+                                        }${
+                                            it.viewCountText?.runs?.let { array ->
+                                                if (array.size > 1) array[1].text else ""
+                                            }
+                                        }"
 
                                     content.channelThumbnail =
                                         it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url

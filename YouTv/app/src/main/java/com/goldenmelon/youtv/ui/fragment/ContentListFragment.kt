@@ -21,9 +21,9 @@ import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.ui.adapter.ContentItemRecyclerViewAdapter
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.preference.Prefs
-import com.goldenmelon.youtv.viewmodel.ChannelViewModel
-import com.goldenmelon.youtv.viewmodel.ContentViewModel
-import com.goldenmelon.youtv.viewmodel.SearchContentViewModel
+import com.goldenmelon.youtv.viewmodel.ChanneListViewModel
+import com.goldenmelon.youtv.viewmodel.MainListViewModel
+import com.goldenmelon.youtv.viewmodel.SearchListViewModel
 import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_content_list.view.*
 
@@ -49,13 +49,13 @@ class ContentListFragment : Fragment() {
     private val viewModel: AndroidViewModel by lazy {
         when (type) {
             is ContentListType.Main -> {
-                ViewModelProviders.of(activity!!).get(ContentViewModel::class.java)
+                ViewModelProviders.of(activity!!).get(MainListViewModel::class.java)
             }
             is ContentListType.Search -> {
-                ViewModelProviders.of(activity!!).get(SearchContentViewModel::class.java)
+                ViewModelProviders.of(activity!!).get(SearchListViewModel::class.java)
             }
             is ContentListType.Channel -> {
-                ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
+                ViewModelProviders.of(activity!!).get(ChanneListViewModel::class.java)
             }
         }
     }
@@ -89,21 +89,21 @@ class ContentListFragment : Fragment() {
         view.setOnRefreshListener {
             when (type) {
                 is ContentListType.Main -> {
-                    (viewModel as ContentViewModel).let {
+                    (viewModel as MainListViewModel).let {
                         it.clearContents()
                         it.loadContents()
                     }
                 }
                 is ContentListType.Search -> {
-                    (viewModel as SearchContentViewModel).let {
+                    (viewModel as SearchListViewModel).let {
                         it.clearContents()
                         it.loadContents(prefs.getLatestSearchWord())
                     }
                 }
                 is ContentListType.Channel -> {
                     channelWebpage?.let {
-                        (viewModel as ChannelViewModel).clearContents()
-                        (viewModel as ChannelViewModel).loadContents(it)
+                        (viewModel as ChanneListViewModel).clearContents()
+                        (viewModel as ChanneListViewModel).loadContents(it)
                     }
                 }
             }
@@ -144,14 +144,14 @@ class ContentListFragment : Fragment() {
 
         val contents = when (type) {
             is ContentListType.Main -> {
-                (viewModel as ContentViewModel).getContents()
+                (viewModel as MainListViewModel).getContents()
             }
             is ContentListType.Search -> {
-                (viewModel as SearchContentViewModel).getContents(prefs.getLatestSearchWord())
+                (viewModel as SearchListViewModel).getContents(prefs.getLatestSearchWord())
             }
             is ContentListType.Channel -> {
                 channelWebpage?.let {
-                    (viewModel as ChannelViewModel).getContents(it)
+                    (viewModel as ChanneListViewModel).getContents(it)
                 }
             }
         }
@@ -177,6 +177,10 @@ class ContentListFragment : Fragment() {
         super.onDetach()
         listener = null
     }
+
+//    fun refresh() {
+//        viewModel.
+//    }
 
     interface OnListFragmentInteractionListener {
         fun onItemClick(item: Content)
