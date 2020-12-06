@@ -3,17 +3,9 @@ package com.goldenmelon.youtv.ui.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.Toast
-import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.datas.Content
@@ -23,29 +15,12 @@ import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.viewmodel.ContentViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-
-/*
-    TODO:
-    유투브 메이페이지 HTML 파싱...
-    이미지 얻어오기 android glide...
- */
-
-
 class MainActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
 
     private lateinit var contentViewModel: ContentViewModel
 
     private var contentListFragment: ContentListFragment? = null
-
-    private val gestureDetector: GestureDetectorCompat by lazy {
-        GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                return true
-                //return super.onSingleTapUp(e)
-            }
-        })
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +31,6 @@ class MainActivity : BaseContentListActivity(),
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         toolbar_play.setOnClickListener {
-            //Toast.makeText(applicationContext, "actionPlay", Toast.LENGTH_SHORT).show()
             serviceRef?.let {
                 if (it.isPlaying()) {
                     it.pause()
@@ -74,7 +48,6 @@ class MainActivity : BaseContentListActivity(),
 
     override fun onResume() {
         super.onResume()
-
         toolbar_play.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
@@ -105,15 +78,8 @@ class MainActivity : BaseContentListActivity(),
         }
     }
 
+    //ItemFragment OnListFragmentInteractionListener Callback method
     override fun onItemClick(item: Content) {
-//        prefs.getPlayContent()?.let { it ->
-//            if (it.videoId == item.videoId) {
-//                PlayerActivity.startActivity(MainActivity@ this, it)
-//            } else {
-//                playContent(item.videoId)
-//            }
-//        } ?: playContent(item.videoId)
-
         playContent(item.videoId)
     }
 
@@ -123,7 +89,6 @@ class MainActivity : BaseContentListActivity(),
         }
     }
 
-    //ItemFragment OnListFragmentInteractionListener Callback method
     override fun onReachBottom() {
         loadingManager.showBottomLoading()
         contentViewModel.loadContents()
@@ -141,7 +106,7 @@ class MainActivity : BaseContentListActivity(),
         const val TAG = "MainActivity"
         const val LOGIN_REQUEST_CODE = 1001
 
-        public fun startActivity(context: Context) {
+        fun startActivity(context: Context) {
             Intent(
                 context,
                 MainActivity::class.java
@@ -152,31 +117,23 @@ class MainActivity : BaseContentListActivity(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-//            R.id.action_play_list -> {
-//                PlayListActivity.startActivity(this)
-//                true
-//            }
-
+        when (item.itemId) {
             R.id.action_search -> {
                 SearchActivity.startActivity(this)
-                true
+                return true
             }
 
             R.id.action_login -> {
                 LoginActivity.startActivityForResult(this, LOGIN_REQUEST_CODE)
-                true
+                return true
             }
-            else -> super.onOptionsItemSelected(item)
         }
+
+        return super.onOptionsItemSelected(item)
     }
 }
