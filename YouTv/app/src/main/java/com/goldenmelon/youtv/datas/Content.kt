@@ -3,6 +3,7 @@ package com.goldenmelon.youtv.datas
 data class Content(
     //unique
     var videoId: String,
+
     var thumbnail: String? = null,
     var title: String? = null,
     var subTitle: String? = null,
