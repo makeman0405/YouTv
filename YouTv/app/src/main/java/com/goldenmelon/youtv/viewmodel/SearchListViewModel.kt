@@ -5,11 +5,15 @@ import android.os.AsyncTask
 import android.webkit.CookieManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.MAIN_URL
 import com.goldenmelon.youtv.utils.SEARCH_URL
 import com.goldenmelon.youtv.utils.json.searchContentData
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -21,7 +25,12 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
 
     override fun loadContents(param: String?) {
         if (!param.isNullOrBlank()) {
-            YoutubeCrawlingTask(param).execute()
+            viewModelScope.launch {
+                val value = async(Dispatchers.IO) {
+                    crawling(param)
+                }
+                contents.value = value.await()
+            }
         }
     }
 
@@ -30,88 +39,76 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
         loadContents(param)
     }
 
-    private inner class YoutubeCrawlingTask(private val keyword: String) :
-        AsyncTask<Void, Void, MutableList<Content>>() {
+    private suspend fun crawling(keyword: String): MutableList<Content> {
+        var list: MutableList<Content> = contents.value ?: mutableListOf<Content>()
 
-        override fun doInBackground(vararg params: Void?): MutableList<Content> {
-            var list: MutableList<Content>? = contents.value
-            if (list == null) {
-                list = mutableListOf<Content>()
-            }
+        //video filter
+        val connection = Jsoup.connect(SEARCH_URL + keyword + "&sp=EgIQAQ%253D%253D")
+        CookieManager.getInstance().getCookie(MAIN_URL)?.let {
+            connection.cookie("Cookie", it)
+        }
 
-            //video filter
-            val connection = Jsoup.connect(SEARCH_URL + keyword + "&sp=EgIQAQ%253D%253D")
+        val document: Document
+        try {
+            document = connection.get()
+        } catch (e: java.io.IOException) {
+            return list
+        }
 
-            CookieManager.getInstance().getCookie(MAIN_URL)?.let {
-                connection.cookie("Cookie", it)
-            }
+        val elements = document.getElementsByTag("script")
 
-            val document: Document
-            try {
-                document = connection.get()
-            } catch (e: java.io.IOException) {
-                return list
-            }
+        for (element in elements) {
+            if (element.html().contains("var ytInitialData = ")) {
+                val json = element.html().trim()
+                    .split("var ytInitialData = ")[1].split("};")[0] + "}"
+                val gson = GsonBuilder().create()
+                val data =
+                    gson.fromJson(json, searchContentData::class.java)
 
-            val elements = document.getElementsByTag("script")
+                data.contents.twoColumnSearchResultsRenderer?.let {
+                    for (content in it.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents) {
+                        content.videoRenderer?.let {
+                            var content = Content(it.videoId)
+                            if (!list.contains(content)) {
+                                content.thumbnail = it.thumbnail.thumbnails[0].url
 
-            for (element in elements) {
-                if (element.html().contains("var ytInitialData = ")) {
-                    val json = element.html().trim()
-                        .split("var ytInitialData = ")[1].split("};")[0] + "}"
-                    val gson = GsonBuilder().create()
-                    val data =
-                        gson.fromJson(json, searchContentData::class.java)
-
-                    data.contents.twoColumnSearchResultsRenderer?.let {
-                        for (content in it.primaryContents.sectionListRenderer.contents[0].itemSectionRenderer.contents) {
-                            content.videoRenderer?.let {
-                                var content = Content(it.videoId)
-                                if (!list.contains(content)) {
-                                    content.thumbnail = it.thumbnail.thumbnails[0].url
-
-                                    if (it.title.simpleText != null) {
-                                        content.title = it.title.simpleText
-                                    } else {
-                                        if (!it.title.runs.isNullOrEmpty()) {
-                                            content.title = it.title.runs[0].text
-                                        }
+                                if (it.title.simpleText != null) {
+                                    content.title = it.title.simpleText
+                                } else {
+                                    if (!it.title.runs.isNullOrEmpty()) {
+                                        content.title = it.title.runs[0].text
                                     }
-
-                                    content.lengthText = "${it.lengthText?.simpleText}"
-                                    content.ownerText = it.ownerText.runs[0].text
-                                    content.subTitle =
-                                        if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
-                                        else "${it.ownerText.runs[0].text} • ${
-                                            it.viewCountText?.runs?.get(
-                                                0
-                                            )?.text
-                                        }${
-                                            it.viewCountText?.runs?.let { array ->
-                                                if (array.size > 1) array[1].text else ""
-                                            }
-                                        }"
-
-                                    content.channelThumbnail =
-                                        it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
-
-                                    content.channelWebpage =
-                                        it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url
-
-                                    list.add(content)
                                 }
+
+                                content.lengthText = "${it.lengthText?.simpleText}"
+                                content.ownerText = it.ownerText.runs[0].text
+                                content.subTitle =
+                                    if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"
+                                    else "${it.ownerText.runs[0].text} • ${
+                                        it.viewCountText?.runs?.get(
+                                            0
+                                        )?.text
+                                    }${
+                                        it.viewCountText?.runs?.let { array ->
+                                            if (array.size > 1) array[1].text else ""
+                                        }
+                                    }"
+
+                                content.channelThumbnail =
+                                    it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.thumbnail.thumbnails[0].url
+
+                                content.channelWebpage =
+                                    it.channelThumbnailSupportedRenderers.channelThumbnailWithLinkRenderer.navigationEndpoint.commandMetadata.webCommandMetadata.url
+
+                                list.add(content)
                             }
                         }
                     }
                 }
             }
-
-            return list
         }
 
-        override fun onPostExecute(list: MutableList<Content>) {
-            contents.value = list
-        }
+        return list
     }
 
     companion object {
