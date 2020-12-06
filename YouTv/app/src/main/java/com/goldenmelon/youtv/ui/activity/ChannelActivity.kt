@@ -107,13 +107,15 @@ class ChannelActivity : BaseContentListActivity(),
 
         public fun startActivity(context: Context, ownerText: String?, channelWebpage: String?) {
             if (!ownerText.isNullOrBlank() && !channelWebpage.isNullOrBlank()) {
-                Intent(
+                val intent = Intent(
                     context,
                     ChannelActivity::class.java
-                ).putExtra("ownerText", ownerText)
-                    .putExtra("channelWebpage", channelWebpage).let {
-                        context.startActivity(it)
-                    }
+                ).apply {
+                    putExtra("ownerText", ownerText)
+                    putExtra("channelWebpage", channelWebpage)
+                }
+
+                context.startActivity(intent)
             }
         }
     }

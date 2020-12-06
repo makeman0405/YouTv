@@ -215,12 +215,12 @@ class PlayerActivity : AppCompatActivity() {
         const val TAG = "PlayerActivity"
 
         public fun startActivity(context: Context, playContent: PlayContent) {
-            Intent(
+            val intent = Intent(
                 context,
                 PlayerActivity::class.java
-            ).putExtra("playContent", playContent).let {
-                context.startActivity(it)
-            }
+            ).apply { putExtra("playContent", playContent) }
+
+            context.startActivity(intent)
         }
     }
 }

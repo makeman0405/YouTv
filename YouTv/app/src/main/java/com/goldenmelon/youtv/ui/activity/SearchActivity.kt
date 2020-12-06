@@ -162,12 +162,12 @@ class SearchActivity : BaseContentListActivity(),
         const val TAG = "SearchActivity"
 
         public fun startActivity(context: Context) {
-            Intent(
-                context,
-                SearchActivity::class.java
-            ).let {
-                context.startActivity(it)
-            }
+            context.startActivity(
+                Intent(
+                    context,
+                    SearchActivity::class.java
+                )
+            )
         }
     }
 }
