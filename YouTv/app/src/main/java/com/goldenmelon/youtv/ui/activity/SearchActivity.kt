@@ -12,6 +12,7 @@ import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
+import com.goldenmelon.youtv.ui.fragment.ContentListType
 import com.goldenmelon.youtv.viewmodel.SearchContentViewModel
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
@@ -30,6 +31,10 @@ class SearchActivity : BaseContentListActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        initUI()
+    }
+
+    override fun initUI() {
         // Note that the Toolbar defined in the layout has the id "toolbar"
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -41,7 +46,7 @@ class SearchActivity : BaseContentListActivity(),
         toolbar_searchView?.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    TODO("Not yet implemented")
+                    return false
                 }
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -92,6 +97,7 @@ class SearchActivity : BaseContentListActivity(),
         when (fragment) {
             is ContentListFragment -> {
                 contentListFragment = fragment
+                contentListFragment.type = ContentListType.Search
             }
         }
     }

@@ -12,6 +12,7 @@ import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
+import com.goldenmelon.youtv.ui.fragment.ContentListType
 import com.goldenmelon.youtv.viewmodel.ContentViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -26,6 +27,10 @@ class MainActivity : BaseContentListActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initUI()
+    }
+
+    override fun initUI() {
         // Note that the Toolbar defined in the layout has the id "toolbar"
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -79,6 +84,7 @@ class MainActivity : BaseContentListActivity(),
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is ContentListFragment) {
             contentListFragment = fragment
+            contentListFragment.type = ContentListType.Main
         }
     }
 

@@ -32,33 +32,40 @@ import kotlinx.android.synthetic.main.fragment_content_list.view.*
  * Activities containing this fragment MUST implement the
  * [ContentListFragment.OnListFragmentInteractionListener] interface.
  */
-class ContentListFragment : Fragment() {
-    private var mode = 0
 
-    private val viewModel: AndroidViewModel by lazy {
-        if (mode == 0) {
-            ViewModelProviders.of(activity!!).get(ContentViewModel::class.java)
-        } else if (mode == 1) {
-            ViewModelProviders.of(activity!!).get(SearchContentViewModel::class.java)
-        } else {
-            ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
-        }
-    }
+sealed class ContentListType {
+    object Main : ContentListType()
+    object Search : ContentListType()
+    object Channel : ContentListType()
+}
+
+class ContentListFragment : Fragment() {
+    internal lateinit var type: ContentListType
 
     private val items = mutableListOf<Content>()
     private var listener: OnListFragmentInteractionListener? = null
 
+    private val viewModel: AndroidViewModel by lazy {
+        when (type) {
+            is ContentListType.Main -> {
+                ViewModelProviders.of(activity!!).get(ContentViewModel::class.java)
+            }
+            is ContentListType.Search -> {
+                ViewModelProviders.of(activity!!).get(SearchContentViewModel::class.java)
+            }
+            is ContentListType.Channel -> {
+                ViewModelProviders.of(activity!!).get(ChannelViewModel::class.java)
+            }
+        }
+    }
+
     //preference
-    val prefs: Prefs by lazy {
+    private val prefs: Prefs by lazy {
         App.prefs!!
     }
 
     override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
         super.onInflate(context, attrs, savedInstanceState)
-
-        context.obtainStyledAttributes(attrs, R.styleable.ContentListFragment).also {
-            mode = it.getInt(R.styleable.ContentListFragment_mode, 0)
-        }.recycle()
     }
 
     override fun onAttach(context: Context) {
@@ -66,8 +73,6 @@ class ContentListFragment : Fragment() {
         // set Listener
         if (context is OnListFragmentInteractionListener) {
             listener = context
-        } else {
-            //throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
         }
     }
 
@@ -77,33 +82,30 @@ class ContentListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // inflate recyclerview
-
         val view =
             inflater.inflate(R.layout.fragment_content_list, container, false) as SwipeRefreshLayout
 
         view.setOnRefreshListener {
-            //if (items.isEmpty()) {
-            when (mode) {
-                0 -> {
+            when (type) {
+                is ContentListType.Main -> {
                     (viewModel as ContentViewModel).let {
                         it.clearContents()
                         it.loadContents()
                     }
                 }
-                1 -> {
+                is ContentListType.Search -> {
                     (viewModel as SearchContentViewModel).let {
                         it.clearContents()
                         it.loadContents(prefs.getLatestSearchWord())
                     }
                 }
-                else -> {
+                is ContentListType.Channel -> {
                     channelWebpage?.let {
                         (viewModel as ChannelViewModel).clearContents()
                         (viewModel as ChannelViewModel).loadContents(it)
                     }
                 }
             }
-            //}
 
             view.isRefreshing = false
         }
@@ -139,14 +141,14 @@ class ContentListFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val contents = when (mode) {
-            0 -> {
+        val contents = when (type) {
+            is ContentListType.Main -> {
                 (viewModel as ContentViewModel).getContents()
             }
-            1 -> {
+            is ContentListType.Search -> {
                 (viewModel as SearchContentViewModel).getContents(prefs.getLatestSearchWord())
             }
-            else -> {
+            is ContentListType.Channel -> {
                 channelWebpage?.let {
                     (viewModel as ChannelViewModel).getContents(it)
                 }
@@ -180,7 +182,7 @@ class ContentListFragment : Fragment() {
         fun onChannelInItemClick(item: Content)
         fun onReachBottom()
         fun onUpdated()
-        fun onMenuInItemClick(v:View, item: Content)
+        fun onMenuInItemClick(v: View, item: Content)
     }
 
     companion object {

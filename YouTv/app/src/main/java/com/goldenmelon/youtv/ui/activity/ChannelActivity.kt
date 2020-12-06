@@ -10,6 +10,7 @@ import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
+import com.goldenmelon.youtv.ui.fragment.ContentListType
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.activity_main.toolbar_play
@@ -70,6 +71,7 @@ class ChannelActivity : BaseContentListActivity(),
         when (fragment) {
             is ContentListFragment -> {
                 contentListFragment = fragment
+                contentListFragment.type = ContentListType.Channel
                 contentListFragment.channelWebpage = channelWebpage
             }
         }
