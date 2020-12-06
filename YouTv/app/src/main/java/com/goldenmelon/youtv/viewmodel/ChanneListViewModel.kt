@@ -17,25 +17,26 @@ import com.google.gson.GsonBuilder
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-class ChanneListViewModel(application: Application) : AndroidViewModel(application) {
+class ChanneListViewModel(application: Application) : AndroidViewModel(application),
+    ContentListViewModel {
     private var contents: MutableLiveData<MutableList<Content>>? = null
 
-    public fun getContents(channelWebpage: String): LiveData<MutableList<Content>>? {
+    override fun getContents(param: String?): LiveData<MutableList<Content>>? {
         if (contents == null) {
             contents = MutableLiveData()
-            loadContents(channelWebpage)
+            loadContents(param)
         }
 
         return contents
     }
 
-    public fun loadContents(channelWebpage: String) {
-        if (!channelWebpage.isNullOrBlank()) {
-            YoutubeCrawlingTask(channelWebpage).execute()
+    override fun loadContents(param: String?) {
+        if (!param.isNullOrBlank()) {
+            YoutubeCrawlingTask(param).execute()
         }
     }
 
-    public fun clearContents() {
+    override fun clearContents() {
         contents!!.value = mutableListOf<Content>()
     }
 
