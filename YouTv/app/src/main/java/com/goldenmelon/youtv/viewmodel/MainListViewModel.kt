@@ -49,17 +49,17 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
             }
 
             val elements = document.getElementsByTag("script")
-
             for (element in elements) {
-                if (element.html().contains("window[\"ytInitialData\"] = ")) {
-                    val json = element.html().trim()
-                        .split("window[\"ytInitialData\"] = ")[1].split(";\n")[0]
+                var script = element.html()
+                if (script.contains("var ytInitialData = ")) {
+                    var json = script.trim()
+                        .split("var ytInitialData = ")[1].split("};")[0]
+                    json+="}"
 
                     val gson = GsonBuilder().create()
                     val data =
                         gson.fromJson(json, contentData::class.java)
 
-                    //fatal
                     data.contents?.twoColumnBrowseResultsRenderer?.let {
                         for (content in it.tabs[0].tabRenderer.content.richGridRenderer.contents) {
                             content.richItemRenderer?.content?.videoRenderer?.let {
@@ -99,6 +99,7 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
                             }
                         }
                     }
+                    break;
                 }
             }
 

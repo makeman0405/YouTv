@@ -151,7 +151,9 @@ class ContentListFragment : Fragment() {
     fun refreshData() {
         when (viewModel) {
             is MainListViewModel -> {
-                viewModel.refresh()
+                if(viewModel.contents.value.isNullOrEmpty()) {
+                    viewModel.loadContents()
+                }
             }
             is SearchListViewModel -> {
                 viewModel.refresh(prefs.getLatestSearchWord())
