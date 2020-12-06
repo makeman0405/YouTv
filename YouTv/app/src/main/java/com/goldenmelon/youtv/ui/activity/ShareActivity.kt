@@ -59,22 +59,6 @@ class ShareActivity : AppCompatActivity() {
                     ).show()
                 }
 
-//                if (!isSuccess) {
-//                    showAlertDialog(
-//                        message = getString(R.string.popup_msg_not_supported_content_run_youtube),
-//                        positionListener = DialogInterface.OnClickListener { dialog, which ->
-//                            Intent(
-//                                Intent.ACTION_VIEW,
-//                                Uri.parse("https://www.youtube.com/watch?v=$videoId")
-//                            )?.also { intent ->
-//                                startActivity(
-//                                    intent
-//                                )
-//                            }
-//                        })
-//                }
-//
-//                LoadingManager().dismissCenterLoading()
                 finish()
             }
         }.extract("https://www.youtube.com/watch?v=$videoId", true, true)
