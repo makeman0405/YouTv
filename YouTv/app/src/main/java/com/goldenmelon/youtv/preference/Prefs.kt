@@ -10,7 +10,7 @@ class Prefs(context: Context) {
         context.getSharedPreferences("com.goldenmelon.youtv", Context.MODE_PRIVATE)
     }
 
-    public fun getPlayContent(): PlayContent? {
+    fun getPlayContent(): PlayContent? {
         val json = sharedPreferences.getString(PREF_PLAYCONTENT, "")
         if (json.isNullOrBlank()) {
             return null
@@ -19,7 +19,7 @@ class Prefs(context: Context) {
         return Gson().fromJson(json, PlayContent::class.java)
     }
 
-    public fun setPlayContent(playContent: PlayContent?) {
+    fun setPlayContent(playContent: PlayContent?) {
         var json: String? = null
 
         playContent?.let {
@@ -29,7 +29,7 @@ class Prefs(context: Context) {
         sharedPreferences.edit().putString(PREF_PLAYCONTENT, json ?: "").apply()
     }
 
-    public fun getSortCutPosition(): PointF? {
+    fun getSortCutPosition(): PointF? {
         val json = sharedPreferences.getString(PREF_SHORTCUT_POSITION, "")
         if (json.isNullOrBlank()) {
             return null
@@ -38,7 +38,7 @@ class Prefs(context: Context) {
         return Gson().fromJson(json, PointF::class.java)
     }
 
-    public fun setSortCutPosition(position: PointF) {
+    fun setSortCutPosition(position: PointF) {
         var json: String
 
         position.let {
@@ -48,11 +48,11 @@ class Prefs(context: Context) {
         sharedPreferences.edit().putString(PREF_SHORTCUT_POSITION, json).apply()
     }
 
-    public fun getLatestSearchWord(): String {
+    fun getLatestSearchWord(): String {
         return sharedPreferences.getString(PREF_LATEST_SEARCH_WORD, "")!!
     }
 
-    public fun setLatestSearchWord(word: String) {
+    fun setLatestSearchWord(word: String) {
         sharedPreferences.edit().putString(PREF_LATEST_SEARCH_WORD, word).apply()
     }
 
