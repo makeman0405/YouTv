@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.*
 import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
 
-
 open class BaseContentListActivity : AppCompatActivity() {
     //ItemFragment OnListFragmentInteractionListener Callback method
     val loadingManager = LoadingManager()
@@ -289,29 +288,30 @@ open class BaseContentListActivity : AppCompatActivity() {
     }
 
     fun showListItemMenu(v: View, item: Content) {
-        val view = (getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater).inflate(
-            R.layout.popup_window_list_item_menu,
-            null
-        )
-
         val popup = PopupWindow(
-            view,
+            LayoutInflater.from(applicationContext).inflate(
+                R.layout.popup_window_list_item_menu,
+                null
+            ),
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-
-        //share
-        view.share.setOnClickListener {
-            shareContent(this, item.videoId)
-            popup.dismiss()
+        ).apply {
+            setBackgroundDrawable(ColorDrawable(Color.WHITE))
+            elevation = 20f;
+            isTouchable = true
+            isFocusable = true
+            isOutsideTouchable = true
+            contentView.share.setOnClickListener {
+                shareContent(applicationContext, item.videoId)
+                dismiss()
+            }
         }
 
-        popup.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-        popup.elevation = 20f;
-        popup.isTouchable = true
-        popup.isFocusable = true
-        popup.isOutsideTouchable = true
-        popup.showAsDropDown(v, -convertDpToPixel(22f, this).toInt(), -convertDpToPixel(42f, this).toInt())
+        popup.showAsDropDown(
+            v,
+            -convertDpToPixel(22f, this).toInt(),
+            -convertDpToPixel(42f, this).toInt()
+        )
     }
 
     inner class LoadingManager {
