@@ -93,7 +93,6 @@ class ContentListFragment : Fragment() {
                     ) {
                         if (!canScrollVertically(1)) {
                             moreData()
-                            listener?.onReachBottom()
                         }
                     }
                 }
@@ -112,6 +111,15 @@ class ContentListFragment : Fragment() {
     override fun onDetach() {
         listener = null
         super.onDetach()
+    }
+
+    fun moreData() {
+        when (viewModel) {
+            is MainListViewModel -> {
+                viewModel.loadContents()
+                listener?.onReachBottom()
+            }
+        }
     }
 
     private fun observeData() {
@@ -163,14 +171,6 @@ class ContentListFragment : Fragment() {
                 channelWebpage?.let {
                     viewModel.refresh(it)
                 }
-            }
-        }
-    }
-
-    fun moreData() {
-        when (viewModel) {
-            is MainListViewModel -> {
-                viewModel.loadContents()
             }
         }
     }
