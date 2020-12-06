@@ -50,11 +50,9 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
 
             val elements = document.getElementsByTag("script")
             for (element in elements) {
-                var script = element.html()
-                if (script.contains("var ytInitialData = ")) {
-                    var json = script.trim()
-                        .split("var ytInitialData = ")[1].split("};")[0]
-                    json+="}"
+                if (element.html().contains("var ytInitialData = ")) {
+                    var json = element.html().trim()
+                        .split("var ytInitialData = ")[1].split("};")[0] + "}"
 
                     val gson = GsonBuilder().create()
                     val data =
