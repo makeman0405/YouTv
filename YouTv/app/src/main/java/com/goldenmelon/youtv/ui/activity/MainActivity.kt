@@ -21,10 +21,6 @@ import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.viewmodel.ContentViewModel
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -42,8 +38,6 @@ class MainActivity : BaseContentListActivity(),
 
     private var contentListFragment: ContentListFragment? = null
 
-    private lateinit var interstitialAd: InterstitialAd
-
     private val gestureDetector: GestureDetectorCompat by lazy {
         GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapUp(e: MotionEvent?): Boolean {
@@ -60,25 +54,6 @@ class MainActivity : BaseContentListActivity(),
         // Note that the Toolbar defined in the layout has the id "toolbar"
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // init fullScreen Ad
-        MobileAds.initialize(this) {}
-        interstitialAd = InterstitialAd(this)
-        interstitialAd.adUnitId = "ca-app-pub-3940256099942544/1033173712"
-        interstitialAd.adListener = object : AdListener() {
-            override fun onAdClosed() {
-                interstitialAd.loadAd(AdRequest.Builder().build())
-            }
-        }
-        interstitialAd.loadAd(AdRequest.Builder().build())
-
-        toolbar_donate.setOnClickListener {
-            if (interstitialAd.isLoaded) {
-                interstitialAd.show()
-            } else {
-                //Log.d("TAG", "The interstitial wasn't loaded yet.")
-            }
-        }
 
         toolbar_play.setOnClickListener {
             //Toast.makeText(applicationContext, "actionPlay", Toast.LENGTH_SHORT).show()

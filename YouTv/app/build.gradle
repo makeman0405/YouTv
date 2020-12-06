@@ -63,9 +63,6 @@ dependencies {
     //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    //AdMob
-    implementation 'com.google.android.gms:play-services-ads:19.2.0'
-
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
