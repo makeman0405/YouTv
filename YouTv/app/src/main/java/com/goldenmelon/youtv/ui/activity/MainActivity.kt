@@ -88,7 +88,7 @@ class MainActivity : BaseContentListActivity(),
         if (requestCode == LOGIN_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == Activity.RESULT_OK) {
-                contentListFragment.refreshViewModel()
+                contentListFragment.refreshData()
             }
         }
     }

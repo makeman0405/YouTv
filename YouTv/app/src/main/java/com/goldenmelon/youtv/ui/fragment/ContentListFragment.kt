@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
@@ -21,9 +20,7 @@ import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.ui.adapter.ContentItemRecyclerViewAdapter
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.preference.Prefs
-import com.goldenmelon.youtv.viewmodel.ChanneListViewModel
-import com.goldenmelon.youtv.viewmodel.MainListViewModel
-import com.goldenmelon.youtv.viewmodel.SearchListViewModel
+import com.goldenmelon.youtv.viewmodel.*
 import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_content_list.view.*
 
@@ -32,38 +29,21 @@ import kotlinx.android.synthetic.main.fragment_content_list.view.*
  * Activities containing this fragment MUST implement the
  * [ContentListFragment.OnListFragmentInteractionListener] interface.
  */
-
-sealed class ContentListType {
-    object Main : ContentListType()
-    object Search : ContentListType()
-    object Channel : ContentListType()
-}
-
 class ContentListFragment : Fragment() {
-    internal lateinit var type: ContentListType
-
     private val items = mutableListOf<Content>()
+
+    lateinit var viewModel: ContentListViewModel
 
     private var listener: OnListFragmentInteractionListener? = null
 
-    private val viewModel: AndroidViewModel by lazy {
-        when (type) {
-            is ContentListType.Main -> {
-                ViewModelProviders.of(activity!!).get(MainListViewModel::class.java)
-            }
-            is ContentListType.Search -> {
-                ViewModelProviders.of(activity!!).get(SearchListViewModel::class.java)
-            }
-            is ContentListType.Channel -> {
-                ViewModelProviders.of(activity!!).get(ChanneListViewModel::class.java)
-            }
-        }
-    }
-
     //preference
+    //LatestSearchWord
     private val prefs: Prefs by lazy {
         App.prefs!!
     }
+
+    //채널 페이지 URL
+    var channelWebpage: String? = null
 
     override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
         super.onInflate(context, attrs, savedInstanceState)
@@ -84,33 +64,16 @@ class ContentListFragment : Fragment() {
     ): View? {
         // inflate recyclerview
         val view =
-            inflater.inflate(R.layout.fragment_content_list, container, false) as SwipeRefreshLayout
-
-        view.setOnRefreshListener {
-            when (type) {
-                is ContentListType.Main -> {
-                    (viewModel as MainListViewModel).let {
-                        it.clearContents()
-                        it.loadContents()
-                    }
-                }
-                is ContentListType.Search -> {
-                    (viewModel as SearchListViewModel).let {
-                        it.clearContents()
-                        it.loadContents(prefs.getLatestSearchWord())
-                    }
-                }
-                is ContentListType.Channel -> {
-                    channelWebpage?.let {
-                        (viewModel as ChanneListViewModel).clearContents()
-                        (viewModel as ChanneListViewModel).loadContents(it)
-                    }
+            (inflater.inflate(
+                R.layout.fragment_content_list,
+                container,
+                false
+            ) as SwipeRefreshLayout).apply {
+                setOnRefreshListener {
+                    refreshData()
+                    isRefreshing = false
                 }
             }
-
-            view.isRefreshing = false
-        }
-
 
         // set the adapter
         with(view.list) {
@@ -121,6 +84,7 @@ class ContentListFragment : Fragment() {
                     listener
                 )
 
+            //하단 진입 리스너
             addOnScrollListener(
                 object : OnScrollListener() {
                     override fun onScrollStateChanged(
@@ -128,6 +92,7 @@ class ContentListFragment : Fragment() {
                         newState: Int
                     ) {
                         if (!canScrollVertically(1)) {
+                            moreData()
                             listener?.onReachBottom()
                         }
                     }
@@ -138,25 +103,19 @@ class ContentListFragment : Fragment() {
         return view
     }
 
-    var channelWebpage: String? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        observeData()
+        loadData()
+    }
 
-        val contents = when (type) {
-            is ContentListType.Main -> {
-                (viewModel as MainListViewModel).getContents()
-            }
-            is ContentListType.Search -> {
-                (viewModel as SearchListViewModel).getContents(prefs.getLatestSearchWord())
-            }
-            is ContentListType.Channel -> {
-                channelWebpage?.let {
-                    (viewModel as ChanneListViewModel).getContents(it)
-                }
-            }
-        }
+    override fun onDetach() {
+        listener = null
+        super.onDetach()
+    }
 
-        contents?.observe(this,
+    private fun observeData() {
+        viewModel.contents.observe(this,
             Observer<List<Content>> {
                 if (it.isEmpty()) {
                     items.clear()
@@ -168,19 +127,51 @@ class ContentListFragment : Fragment() {
                     }
                 }
 
-                (/*view as RecyclerView*/list).adapter?.notifyDataSetChanged()
+                list.adapter?.notifyDataSetChanged()
                 listener?.onUpdated()
             })
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
+    private fun loadData() {
+        when (viewModel) {
+            is MainListViewModel -> {
+                viewModel.loadContents()
+            }
+            is SearchListViewModel -> {
+                viewModel.loadContents(prefs.getLatestSearchWord())
+            }
+            is ChannelListViewModel -> {
+                channelWebpage?.let {
+                    viewModel.loadContents(it)
+                }
+            }
+        }
     }
 
-//    fun refresh() {
-//        viewModel.
-//    }
+    fun refreshData() {
+        when (viewModel) {
+            is MainListViewModel -> {
+                viewModel.refresh()
+            }
+            is SearchListViewModel -> {
+                viewModel.refresh(prefs.getLatestSearchWord())
+
+            }
+            is ChannelListViewModel -> {
+                channelWebpage?.let {
+                    viewModel.refresh(it)
+                }
+            }
+        }
+    }
+
+    fun moreData() {
+        when (viewModel) {
+            is MainListViewModel -> {
+                viewModel.loadContents()
+            }
+        }
+    }
 
     interface OnListFragmentInteractionListener {
         fun onItemClick(item: Content)

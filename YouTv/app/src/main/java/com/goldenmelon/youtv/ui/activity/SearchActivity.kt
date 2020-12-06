@@ -50,7 +50,7 @@ class SearchActivity : BaseContentListActivity(),
                     if (!query.isNullOrBlank()) {
                         if (searchWord.isNullOrBlank() || !searchWord.equals(query)) {
                             prefs.setLatestSearchWord(query)
-                            contentListFragment.refreshViewModel()
+                            contentListFragment.refreshData()
                             searchWord = query
                         }
                     }
