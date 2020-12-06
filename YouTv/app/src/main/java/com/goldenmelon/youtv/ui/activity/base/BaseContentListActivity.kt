@@ -109,6 +109,8 @@ open class BaseContentListActivity : AppCompatActivity() {
 //        super.onCreate(savedInstanceState, persistentState)
 //    }
 
+    open fun initUI() {}
+
     override fun onResume() {
         super.onResume()
         if (MediaService.isRunning) {
