@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
@@ -65,7 +64,6 @@ class ChannelActivity : BaseContentListActivity(),
 
     override fun onResume() {
         super.onResume()
-
         toolbar_play.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
@@ -82,6 +80,7 @@ class ChannelActivity : BaseContentListActivity(),
         }
     }
 
+    //ItemFragment OnListFragmentInteractionListener Callback method
     override fun onItemClick(item: Content) {
         playContent(item.videoId)
     }
