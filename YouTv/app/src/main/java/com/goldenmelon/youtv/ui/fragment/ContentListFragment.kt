@@ -43,6 +43,7 @@ class ContentListFragment : Fragment() {
     internal lateinit var type: ContentListType
 
     private val items = mutableListOf<Content>()
+
     private var listener: OnListFragmentInteractionListener? = null
 
     private val viewModel: AndroidViewModel by lazy {
@@ -137,7 +138,7 @@ class ContentListFragment : Fragment() {
         return view
     }
 
-    public var channelWebpage: String? = null
+    var channelWebpage: String? = null
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -160,10 +161,10 @@ class ContentListFragment : Fragment() {
                 if (it.isEmpty()) {
                     items.clear()
                 } else {
-                    for (content in it) {
-                        if (!items.contains(content)) {
-                            items.add(content)
-                        }
+                    it.filterNot {
+                        items.contains(it)
+                    }.forEach {
+                        items.add(it)
                     }
                 }
 
