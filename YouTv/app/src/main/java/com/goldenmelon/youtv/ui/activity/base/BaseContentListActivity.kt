@@ -7,7 +7,6 @@ import android.graphics.PointF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
-import android.util.Log
 import android.util.SparseArray
 import android.view.*
 import android.widget.PopupWindow
