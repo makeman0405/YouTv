@@ -17,4 +17,8 @@ data class Content(
         if (other == null || other !is Content) return false
         return videoId == other.videoId
     }
+
+    override fun hashCode(): Int {
+        return videoId.hashCode()
+    }
 }
