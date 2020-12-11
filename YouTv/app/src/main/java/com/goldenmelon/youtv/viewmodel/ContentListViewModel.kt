@@ -8,7 +8,7 @@ interface ContentListViewModel {
 
     fun loadContents(param: String? = null)
     fun clearContents() {
-        contents?.let {
+        contents.let {
             it.value = mutableListOf<Content>()
         }
     }
