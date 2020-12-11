@@ -193,22 +193,23 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         overridePendingTransition(0, 0)
-
-//        if (mBound) unbindService(connection)
-//        video_view.player = null
     }
 
     override fun onStop() {
         super.onStop()
-
-        if (mBound) unbindService(connection)
-        mBound = false
+        unbindMediaService()
         video_view.player = null
     }
 
     override fun onDestroy() {
         unregisterReceiver(br)
         super.onDestroy()
+    }
+
+    fun unbindMediaService() {
+        if (mBound) unbindService(connection)
+        mBound = false
+        serviceRef = null
     }
 
     companion object {
