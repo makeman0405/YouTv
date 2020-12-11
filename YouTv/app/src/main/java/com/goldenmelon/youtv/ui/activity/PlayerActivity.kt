@@ -53,9 +53,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            video_view.player = null
-            serviceRef = null
-            mBound = false
+            onServiceDisconnected()
         }
     }
 
@@ -193,22 +191,22 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         overridePendingTransition(0, 0)
-
-//        if (mBound) unbindService(connection)
-//        video_view.player = null
     }
 
     override fun onStop() {
         super.onStop()
-
-        if (mBound) unbindService(connection)
-        mBound = false
-        video_view.player = null
+        onServiceDisconnected()
     }
 
     override fun onDestroy() {
         unregisterReceiver(br)
         super.onDestroy()
+    }
+
+    fun onServiceDisconnected() {
+        video_view.player = null
+        serviceRef = null
+        mBound = false
     }
 
     companion object {
