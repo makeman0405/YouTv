@@ -1,20 +1,15 @@
 package com.goldenmelon.youtv.viewmodel
 
 import android.app.Application
-import android.os.AsyncTask
 import android.webkit.CookieManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.MAIN_URL
 import com.goldenmelon.youtv.utils.json.contentData
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 

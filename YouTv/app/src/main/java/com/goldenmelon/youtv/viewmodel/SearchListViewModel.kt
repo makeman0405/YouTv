@@ -1,7 +1,6 @@
 package com.goldenmelon.youtv.viewmodel
 
 import android.app.Application
-import android.os.AsyncTask
 import android.webkit.CookieManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
