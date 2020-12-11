@@ -8,15 +8,17 @@ import android.os.IBinder
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenmelon.youtv.R
+import com.goldenmelon.youtv.databinding.ActivityPlayerBinding
 import com.goldenmelon.youtv.datas.PlayContent
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.utils.shareContent
 import com.google.android.exoplayer2.Player
-import kotlinx.android.synthetic.main.activity_player.*
 
 class PlayerActivity : AppCompatActivity() {
     //Dash URL Test
     //url = "https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
+
+    private lateinit var binding: ActivityPlayerBinding
 
     private val playContent: PlayContent? by lazy {
         intent.getParcelableExtra<PlayContent>("playContent")
@@ -30,15 +32,15 @@ class PlayerActivity : AppCompatActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             serviceRef = (service as MediaService.MediaBinder).getService().also { it ->
-                video_view.player = it.getPlayer()
+                binding.videoView.player = it.getPlayer()
                 //init
-                video_view.keepScreenOn =
-                    !(video_view.player!!.playbackState == Player.STATE_IDLE
-                            || video_view.player!!.playbackState == Player.STATE_ENDED ||
-                            !video_view.player!!.playWhenReady)
-                video_view.player!!.addListener(object : Player.EventListener {
+                binding.videoView.keepScreenOn =
+                    !(binding.videoView.player!!.playbackState == Player.STATE_IDLE
+                            || binding.videoView.player!!.playbackState == Player.STATE_ENDED ||
+                            !binding.videoView.player!!.playWhenReady)
+                binding.videoView.player!!.addListener(object : Player.EventListener {
                     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        this@PlayerActivity.video_view.keepScreenOn =
+                        this@PlayerActivity.binding.videoView.keepScreenOn =
                             !(playbackState == Player.STATE_IDLE || playbackState == Player.STATE_ENDED ||
                                     !playWhenReady)
                     }
@@ -69,7 +71,11 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+
+        //viewBinding...
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initUi()
     }
 
@@ -96,16 +102,16 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        video_title.text = playContent?.title ?: ""
+        binding.videoTitle.text = playContent?.title ?: ""
 
-        share.setOnClickListener { _ ->
+        binding.share.setOnClickListener { _ ->
             //share
             playContent?.let {
                 shareContent(this, it.videoId)
             }
         }
 
-        fullscreen.setOnClickListener {
+        binding.fullscreen.setOnClickListener {
             requestedOrientation = if (isFullScreen) {
                 showSystemUI()
                 it.setBackgroundResource(R.drawable.exo_controls_fullscreen_enter)
@@ -118,9 +124,9 @@ class PlayerActivity : AppCompatActivity() {
             isFullScreen = !isFullScreen
         }
 
-        video_view.setControllerVisibilityListener {
-            video_bar.visibility = it
-            fullscreen_layout.visibility = it
+        binding.videoView.setControllerVisibilityListener {
+            binding.videoBar.visibility = it
+            binding.fullscreenLayout.visibility = it
 
             //Fixed Bug - VideoView Controller 가 사라질때 FullScreen 인 경우 사용에 의해 나타난 상태바와 소프트키를 사라지도록함.
             if (it != View.VISIBLE && isFullScreen) {
@@ -151,11 +157,11 @@ class PlayerActivity : AppCompatActivity() {
         //Fixed Bug - FullScreen 상태에서 상태바, 소프트키가 보여짐. 경로: FullScreen 설정 -> 홈키 -> 재진입
         requestedOrientation = if (!isFullScreen) {
             showSystemUI()
-            fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_enter)
+            binding.fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_enter)
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         } else {
             hideSystemUI()
-            fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_exit)
+            binding.fullscreen.setImageResource(R.drawable.exo_controls_fullscreen_exit)
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
         }
     }
@@ -169,7 +175,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (isFullScreen) {
-            fullscreen.callOnClick()
+            binding.fullscreen.callOnClick()
         } else {
             if (isTaskRoot) {
                 val intent = Intent(

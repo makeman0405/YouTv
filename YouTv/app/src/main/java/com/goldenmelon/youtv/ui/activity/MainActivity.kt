@@ -1,6 +1,5 @@
 package com.goldenmelon.youtv.ui.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,30 +7,36 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.goldenmelon.youtv.R
+import com.goldenmelon.youtv.databinding.ActivityMainBinding
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.viewmodel.MainListViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
+
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var contentListFragment: ContentListFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        //viewBinding...
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initUI()
     }
 
     override fun initUI() {
+        super.initUI()
         // Note that the Toolbar defined in the layout has the id "toolbar"
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar_play.setOnClickListener {
+        binding.toolbarPlay.setOnClickListener {
             serviceRef?.let {
                 if (it.isPlaying()) {
                     it.pause()
@@ -44,7 +49,7 @@ class MainActivity : BaseContentListActivity(),
 
     override fun onResume() {
         super.onResume()
-        toolbar_play.visibility = if (MediaService.isRunning) {
+        binding.toolbarPlay.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
             View.INVISIBLE
@@ -75,7 +80,8 @@ class MainActivity : BaseContentListActivity(),
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is ContentListFragment) {
             contentListFragment = fragment
-            contentListFragment.viewModel =  ViewModelProviders.of(this).get(MainListViewModel::class.java)
+            contentListFragment.viewModel =
+                ViewModelProviders.of(this).get(MainListViewModel::class.java)
         }
     }
 

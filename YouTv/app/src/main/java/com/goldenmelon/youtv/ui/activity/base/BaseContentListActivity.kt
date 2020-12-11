@@ -9,10 +9,10 @@ import android.net.Uri
 import android.os.*
 import android.util.SparseArray
 import android.view.*
-import android.widget.PopupWindow
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
@@ -27,13 +27,29 @@ import com.goldenmelon.youtv.ui.activity.ChannelActivity
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.utils.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.popup_window_list_item_menu.*
-import kotlinx.android.synthetic.main.popup_window_list_item_menu.view.*
 
 open class BaseContentListActivity : AppCompatActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
     //ItemFragment OnListFragmentInteractionListener Callback method
+
+    // 임시 적용...
+    private lateinit var toolbar: Toolbar
+    private lateinit var toolbar_play: ImageView
+    private lateinit var shortcut: RelativeLayout
+    private lateinit var img_shortcut: ImageView
+    private lateinit var center_loading: ProgressBar
+    private lateinit var bottom_loading: ProgressBar
+
+    fun setViews() {
+        toolbar = findViewById(R.id.toolbar)
+        toolbar_play = findViewById(R.id.toolbar_play)
+        shortcut = findViewById(R.id.shortcut)
+        img_shortcut = findViewById(R.id.img_shortcut)
+        center_loading = findViewById(R.id.center_loading)
+        bottom_loading = findViewById(R.id.bottom_loading)
+    }
+
+
     private val loadingManager = LoadingManager()
 
     //preference
@@ -106,10 +122,13 @@ open class BaseContentListActivity : AppCompatActivity(),
     //ShortCut Drag Logic
     var isShortCutDrag = false
 
-    open fun initUI() {}
+    open fun initUI() {
+        setViews()
+    }
 
     override fun onResume() {
         super.onResume()
+
         if (MediaService.isRunning) {
             Intent(this, MediaService::class.java).also { intent ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -306,7 +325,7 @@ open class BaseContentListActivity : AppCompatActivity(),
             isTouchable = true
             isFocusable = true
             isOutsideTouchable = true
-            contentView.share.setOnClickListener {
+            contentView.findViewById<TextView>(R.id.share).setOnClickListener {
                 shareContent(applicationContext, item.videoId)
                 dismiss()
             }

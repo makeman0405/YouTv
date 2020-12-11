@@ -5,24 +5,20 @@ import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.application.App
-import com.goldenmelon.youtv.ui.adapter.ContentItemRecyclerViewAdapter
+import com.goldenmelon.youtv.databinding.FragmentContentListBinding
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.preference.Prefs
+import com.goldenmelon.youtv.ui.adapter.ContentItemRecyclerViewAdapter
 import com.goldenmelon.youtv.viewmodel.*
-import kotlinx.android.synthetic.main.fragment_content_list.*
-import kotlinx.android.synthetic.main.fragment_content_list.view.*
 
 /**
  * A fragment representing a list of Items.
@@ -30,6 +26,13 @@ import kotlinx.android.synthetic.main.fragment_content_list.view.*
  * [ContentListFragment.OnListFragmentInteractionListener] interface.
  */
 class ContentListFragment : Fragment() {
+
+    private var _binding: FragmentContentListBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
     private val items = mutableListOf<Content>()
 
     lateinit var viewModel: ContentListViewModel
@@ -61,22 +64,19 @@ class ContentListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // inflate recyclerview
-        val view =
-            (inflater.inflate(
-                R.layout.fragment_content_list,
-                container,
-                false
-            ) as SwipeRefreshLayout).apply {
-                setOnRefreshListener {
-                    refreshData()
-                    isRefreshing = false
-                }
+    ): View {
+        _binding = FragmentContentListBinding.inflate(inflater, container, false)
+
+        //refresh event
+        binding.root.run {
+            setOnRefreshListener {
+                refreshData()
+                isRefreshing = false
             }
+        }
 
         // set the adapter
-        with(view.list) {
+        with(binding.list) {
             layoutManager = LinearLayoutManager(context)
             adapter =
                 ContentItemRecyclerViewAdapter(
@@ -99,7 +99,7 @@ class ContentListFragment : Fragment() {
             )
         }
 
-        return view
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -111,6 +111,11 @@ class ContentListFragment : Fragment() {
     override fun onDetach() {
         listener = null
         super.onDetach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun moreData() {
@@ -135,7 +140,7 @@ class ContentListFragment : Fragment() {
                     }
                 }
 
-                list.adapter?.notifyDataSetChanged()
+                _binding?.list?.adapter?.notifyDataSetChanged()
                 listener?.onUpdated()
             })
     }
@@ -159,7 +164,7 @@ class ContentListFragment : Fragment() {
     fun refreshData() {
         when (viewModel) {
             is MainListViewModel -> {
-                if(viewModel.contents.value.isNullOrEmpty()) {
+                if (viewModel.contents.value.isNullOrEmpty()) {
                     viewModel.loadContents()
                 }
             }

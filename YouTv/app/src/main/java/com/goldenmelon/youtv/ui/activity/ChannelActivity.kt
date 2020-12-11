@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.goldenmelon.youtv.R
-import com.goldenmelon.youtv.datas.Content
+import com.goldenmelon.youtv.databinding.ActivityChannelBinding
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.viewmodel.ChannelListViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.activity_main.toolbar_play
-import kotlinx.android.synthetic.main.activity_search.*
 
 class ChannelActivity : BaseContentListActivity() {
+
+    private lateinit var binding: ActivityChannelBinding
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -31,18 +28,23 @@ class ChannelActivity : BaseContentListActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_channel)
+
+        //viewBinding...
+        binding = ActivityChannelBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initUI()
     }
 
     override fun initUI() {
+        super.initUI()
         // Note that the Toolbar defined in the layout has the id "toolbar"
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar_title.text = ownerText
+        binding.toolbarTitle.text = ownerText
 
-        toolbar_play.setOnClickListener {
+        binding.toolbarPlay.setOnClickListener {
             //Toast.makeText(applicationContext, "actionPlay", Toast.LENGTH_SHORT).show()
             serviceRef?.let {
                 if (it.isPlaying()) {
@@ -53,14 +55,14 @@ class ChannelActivity : BaseContentListActivity() {
             }
         }
 
-        toolbar_back.setOnClickListener {
+        binding.toolbarBack.setOnClickListener {
             finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        toolbar_play.visibility = if (MediaService.isRunning) {
+        binding.toolbarPlay.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
             View.INVISIBLE

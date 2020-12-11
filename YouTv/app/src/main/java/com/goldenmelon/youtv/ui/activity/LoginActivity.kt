@@ -2,30 +2,35 @@ package com.goldenmelon.youtv.ui.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.*
-import androidx.annotation.RequiresApi
-import com.goldenmelon.youtv.R
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.toolbar
+import com.goldenmelon.youtv.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
+        //viewBinding...
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        initUI()
+    }
+
+    fun initUI() {
         // Note that the Toolbar defined in the layout has the id "toolbar"
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar_back.setOnClickListener {
+        binding.toolbarBack.setOnClickListener {
             finish()
         }
 
-        webview.apply {
+        binding.webview.apply {
             webViewClient = MyWebViewClient()
             settings.javaScriptEnabled = true
             loadUrl(LOGIN_URL)

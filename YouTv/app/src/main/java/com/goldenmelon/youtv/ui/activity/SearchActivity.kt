@@ -7,18 +7,16 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.goldenmelon.youtv.R
-import com.goldenmelon.youtv.datas.Content
+import com.goldenmelon.youtv.databinding.ActivitySearchBinding
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.base.BaseContentListActivity
 import com.goldenmelon.youtv.ui.fragment.ContentListFragment
 import com.goldenmelon.youtv.viewmodel.SearchListViewModel
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.activity_main.toolbar_play
-import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchActivity : BaseContentListActivity(),
     ContentListFragment.OnListFragmentInteractionListener {
+
+    private lateinit var binding: ActivitySearchBinding
 
     private lateinit var contentListFragment: ContentListFragment
 
@@ -26,21 +24,25 @@ class SearchActivity : BaseContentListActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+
+        //viewBinding...
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initUI()
     }
 
     override fun initUI() {
+        super.initUI()
         // Note that the Toolbar defined in the layout has the id "toolbar"
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         prefs.getLatestSearchWord().let {
-            if (it.isNotBlank()) toolbar_searchView.setQuery(it, false)
+            if (it.isNotBlank()) binding.toolbarSearchView.setQuery(it, false)
         }
 
-        toolbar_searchView?.apply {
+        binding.toolbarSearchView.apply {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
                     return false
@@ -55,13 +57,13 @@ class SearchActivity : BaseContentListActivity(),
                         }
                     }
 
-                    toolbar_searchView.clearFocus();
+                    binding.toolbarSearchView.clearFocus();
                     return true;
                 }
             })
         }
 
-        toolbar_play.setOnClickListener {
+        binding.toolbarPlay.setOnClickListener {
             serviceRef?.let {
                 if (it.isPlaying()) {
                     it.pause()
@@ -71,14 +73,14 @@ class SearchActivity : BaseContentListActivity(),
             }
         }
 
-        toolbar_back.setOnClickListener {
+        binding.toolbarBack.setOnClickListener {
             finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        toolbar_play.visibility = if (MediaService.isRunning) {
+        binding.toolbarPlay.visibility = if (MediaService.isRunning) {
             View.VISIBLE
         } else {
             View.INVISIBLE

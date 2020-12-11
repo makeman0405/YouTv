@@ -11,7 +11,6 @@ import com.goldenmelon.youtv.ui.fragment.ContentListFragment.OnListFragmentInter
 import com.goldenmelon.youtv.databinding.FragmentContentListItemBinding
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.loadImage
-import kotlinx.android.synthetic.main.fragment_content_list_item.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
