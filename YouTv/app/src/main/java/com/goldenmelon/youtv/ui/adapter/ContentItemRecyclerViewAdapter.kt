@@ -12,11 +12,6 @@ import com.goldenmelon.youtv.databinding.FragmentContentListItemBinding
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.utils.loadImage
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
 class ContentItemRecyclerViewAdapter(
     private val values: List<Content>,
     private val listener: OnListFragmentInteractionListener?
