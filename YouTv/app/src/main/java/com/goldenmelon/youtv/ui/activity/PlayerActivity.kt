@@ -53,7 +53,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            onServiceDisconnected()
+            unbindMediaService()
         }
     }
 
@@ -70,7 +70,32 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+        initUi()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        registerReceivers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startBindMediaService()
+        setRequestedOrientation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        overridePendingTransition(0, 0)
+        unbindMediaService()
+    }
+
+    override fun onStop() {
+        unregisterReceiver(br)
+        super.onStop()
+    }
+
+    private fun initUi() {
         video_title.text = playContent?.title ?: ""
 
         share.setOnClickListener { _ ->
@@ -102,13 +127,9 @@ class PlayerActivity : AppCompatActivity() {
                 hideSystemUI()
             }
         }
-
-        registerReceivers()
     }
 
-    override fun onStart() {
-        super.onStart()
-
+    private fun startBindMediaService() {
         Intent(this, MediaService::class.java).also { intent ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
@@ -118,12 +139,15 @@ class PlayerActivity : AppCompatActivity() {
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
 
-        showSystemUI()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun unbindMediaService() {
+        if (mBound) unbindService(connection)
+        mBound = false
+        serviceRef = null
+    }
 
+    private fun setRequestedOrientation() {
         //Fixed Bug - FullScreen 상태에서 상태바, 소프트키가 보여짐. 경로: FullScreen 설정 -> 홈키 -> 재진입
         requestedOrientation = if (!isFullScreen) {
             showSystemUI()
@@ -136,16 +160,11 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-
     private fun registerReceivers() {
         registerReceiver(br, IntentFilter().apply {
             addAction(MediaService.ACTION_PLAY)
             addAction(MediaService.ACTION_QUIT)
         })
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
     }
 
     override fun onBackPressed() {
@@ -186,27 +205,6 @@ class PlayerActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
         //window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        overridePendingTransition(0, 0)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        onServiceDisconnected()
-    }
-
-    override fun onDestroy() {
-        unregisterReceiver(br)
-        super.onDestroy()
-    }
-
-    fun onServiceDisconnected() {
-        video_view.player = null
-        serviceRef = null
-        mBound = false
     }
 
     companion object {
