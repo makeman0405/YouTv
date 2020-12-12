@@ -326,7 +326,7 @@ open class BaseContentListActivity : AppCompatActivity(),
             isFocusable = true
             isOutsideTouchable = true
             contentView.findViewById<TextView>(R.id.share).setOnClickListener {
-                shareContent(applicationContext, item.videoId)
+                shareContent(this@BaseContentListActivity, item.videoId)
                 dismiss()
             }
         }
