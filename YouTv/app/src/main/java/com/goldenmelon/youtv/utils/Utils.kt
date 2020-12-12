@@ -115,7 +115,5 @@ fun convertPixelsToDp(px: Float, context: Context?): Float {
 }
 
 //not dash
-//18(360), 22(720)
-//dash
-//136(720), 137(1080)
-val SUPPORT_ITAG_LIST = /*listOf(140)*/ listOf(18, 22)
+//133(240), 18(360), 22(720)
+val SUPPORT_ITAG_LIST = listOf(240, 18, 22)

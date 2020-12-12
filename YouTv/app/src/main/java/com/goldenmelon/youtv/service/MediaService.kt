@@ -251,7 +251,7 @@ class MediaService : Service() {
             //no playing
             if (!isPlaying()) {
                 //url
-                player?.prepare(buildMediaSource(Uri.parse(playContent?.url)), false, true)
+                player?.prepare(buildMediaSource(Uri.parse(playContent?.urls!![0].url)), false, true)
 
                 // playing
                 play()
@@ -263,7 +263,7 @@ class MediaService : Service() {
             //url
             player?.let {
                 //it.seekTo(0, 0L)
-                it.prepare(buildMediaSource(Uri.parse(playContent?.url)), true, true)
+                player?.prepare(buildMediaSource(Uri.parse(playContent?.urls!![0].url)), false, true)
             }
 
             //play

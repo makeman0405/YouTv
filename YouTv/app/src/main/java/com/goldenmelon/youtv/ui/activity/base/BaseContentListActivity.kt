@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.util.forEach
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
@@ -21,6 +22,7 @@ import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.datas.Content
 import com.goldenmelon.youtv.datas.PlayContent
+import com.goldenmelon.youtv.datas.PlayUrl
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
 import com.goldenmelon.youtv.ui.activity.ChannelActivity
@@ -182,20 +184,24 @@ open class BaseContentListActivity : AppCompatActivity(),
             ) {
                 var isSuccess = false
                 if (ytFiles != null && vMeta != null) {
-                    for (itag in SUPPORT_ITAG_LIST) {
-                        if (ytFiles[itag] != null) {
-                            PlayerActivity.startActivity(
-                                tempContext, PlayContent(
-                                    vMeta.videoId,
-                                    vMeta.title,
-                                    vMeta.hqImageUrl ?: vMeta.thumbUrl,
-                                    ytFiles[itag].url
-                                )
-                            )
+                    val playUrls = mutableListOf<PlayUrl>()
 
-                            isSuccess = true
-                            break
+                    ytFiles.forEach { key, value ->
+                        if (SUPPORT_ITAG_LIST.contains(value.format.itag)) {
+                            playUrls.add(PlayUrl(value.format.height, value.url))
                         }
+                    }
+
+                    if (playUrls.isNotEmpty()) {
+                        PlayerActivity.startActivity(
+                            tempContext, PlayContent(
+                                vMeta.videoId,
+                                vMeta.title,
+                                vMeta.hqImageUrl ?: vMeta.thumbUrl,
+                                playUrls
+                            )
+                        )
+                        isSuccess = true
                     }
                 }
 

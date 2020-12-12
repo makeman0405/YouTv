@@ -3,19 +3,25 @@ package com.goldenmelon.youtv.datas
 import android.os.Parcel
 import android.os.Parcelable
 
-data class PlayContent(val videoId:String?, val title:String?, val thumbUrl:String?, val url:String?):Parcelable {
+data class PlayContent(
+    val videoId: String?,
+    val title: String?,
+    val thumbUrl: String?,
+    val urls: List<PlayUrl>?
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString()
-    )
+        parcel.createTypedArrayList(PlayUrl)
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(videoId)
         parcel.writeString(title)
         parcel.writeString(thumbUrl)
-        parcel.writeString(url)
+        parcel.writeTypedList(urls)
     }
 
     override fun describeContents(): Int {

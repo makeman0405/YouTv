@@ -20,7 +20,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
-    private val playContent: PlayContent? by lazy {
+    private val playContent: PlayContent by lazy {
         intent.getParcelableExtra<PlayContent>("playContent")
     }
 
@@ -102,11 +102,11 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        binding.videoTitle.text = playContent?.title ?: ""
+        binding.videoTitle.text = playContent.title ?: ""
 
         binding.share.setOnClickListener { _ ->
             //share
-            playContent?.let {
+            playContent.let {
                 shareContent(this, it.videoId)
             }
         }
