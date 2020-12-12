@@ -79,7 +79,7 @@ class SearchListViewModel(application: Application) : AndroidViewModel(applicati
                                     }
                                 }
 
-                                content.lengthText = "${it.lengthText?.simpleText}"
+                                content.lengthText = it.lengthText?.simpleText?:"null"
                                 content.ownerText = it.ownerText.runs[0].text
                                 content.subTitle =
                                     if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"

@@ -72,7 +72,7 @@ class MainListViewModel(application: Application) : AndroidViewModel(application
                                     }
                                 }
 
-                                tempContent.lengthText = "${it.lengthText?.simpleText}"
+                                tempContent.lengthText = it.lengthText?.simpleText ?: "null"
                                 tempContent.ownerText = it.ownerText.runs[0].text
                                 tempContent.subTitle =
                                     if (it.publishedTimeText?.simpleText != null) "${it.ownerText.runs[0].text} • ${it.viewCountText?.simpleText} • ${it.publishedTimeText?.simpleText}"

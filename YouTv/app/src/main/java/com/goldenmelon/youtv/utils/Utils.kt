@@ -19,8 +19,16 @@ const val CHANNEL_URL = "https://m.youtube.com"
 const val SEARCH_URL = "https://m.youtube.com/results?search_query="
 
 //확장 함수(추가 Study: 확장 프로퍼티)
-public fun ImageView.loadImage(url: String?, requestOptions: RequestOptions) {
-    Glide.with(context).load(url).apply(requestOptions).into(this)
+//fun ImageView.loadImage(url: String?) {
+//    url?.let {
+//        Glide.with(context).load(it).into(this)
+//    }
+//}
+
+fun ImageView.loadImage(url: String?, requestOptions: RequestOptions) {
+    url?.let {
+        Glide.with(context).load(it).apply(requestOptions).into(this)
+    }
 }
 
 fun shareContent(context: Context, videoId: String?) {

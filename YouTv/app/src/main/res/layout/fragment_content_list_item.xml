@@ -4,8 +4,8 @@
     <data>
 
         <variable
-            name="item"
-            type="com.goldenmelon.youtv.datas.Content" />
+            name="viewModel"
+            type="com.goldenmelon.youtv.ui.adapter.ContentItemRecyclerViewAdapter.ContentViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -15,12 +15,11 @@
         android:layout_margin="10dp"
         card_view:cardBackgroundColor="@android:color/transparent"
         card_view:cardElevation="0dp">
-        <!--    card_view:cardCornerRadius="12dp" -->
-        <!--    card_view:cardElevation="3dp"-->
-        <!--    card_view:contentPadding="4dp"-->
+
         <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:onClick="@{viewModel::onItemClick}">
 
             <ImageView
                 android:id="@+id/item_thumbnail"
@@ -28,6 +27,7 @@
                 android:layout_height="0dp"
                 android:background="@android:color/black"
                 android:src="@drawable/abc_vector_test"
+                app:imageUrl="@{viewModel.item.thumbnail}"
                 app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -43,7 +43,7 @@
                 android:background="@android:color/black"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
-                android:text='@{item.lengthText}'
+                android:text='@{viewModel.item.lengthText}'
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/item_thumbnail"
@@ -61,6 +61,7 @@
                 android:text="LIVE"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
+                android:visibility="@{viewModel.liveVislble}"
                 app:layout_constraintBottom_toBottomOf="@id/item_thumbnail"
                 app:layout_constraintRight_toRightOf="@id/item_thumbnail" />
 
@@ -69,9 +70,13 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_margin="10dp"
+                android:onClick="@{viewModel::onChannelInItemClick}"
+                android:visibility="@{viewModel.channelVisible}"
+                app:imageUrl="@{viewModel.item.channelThumbnail}"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/item_title"
-                app:layout_constraintTop_toBottomOf="@id/item_thumbnail" />
+                app:layout_constraintTop_toBottomOf="@id/item_thumbnail"
+                app:supportCircle="@{true}" />
 
             <TextView
                 android:id="@+id/item_title"
@@ -79,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:maxLines="3"
-                android:text='@{item.title}'
+                android:text='@{viewModel.item.title}'
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 app:layout_constraintLeft_toRightOf="@id/item_channel_thumbnail"
@@ -91,7 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text='@{item.subTitle}'
+                android:text='@{viewModel.item.subTitle}'
                 android:textColor="@android:color/darker_gray"
                 android:textSize="10sp"
                 app:layout_constraintEnd_toEndOf="@id/item_title"
@@ -102,6 +107,7 @@
                 android:id="@+id/item_menu"
                 android:layout_width="42dp"
                 android:layout_height="44dp"
+                android:onClick="@{viewModel::onMenuInItemClick}"
                 android:paddingLeft="18dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"

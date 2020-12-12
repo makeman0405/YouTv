@@ -4,26 +4,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.request.RequestOptions
-import com.goldenmelon.youtv.ui.fragment.ContentListFragment.OnListFragmentInteractionListener
 import com.goldenmelon.youtv.databinding.FragmentContentListItemBinding
 import com.goldenmelon.youtv.datas.Content
+import com.goldenmelon.youtv.ui.fragment.ContentListFragment.OnListFragmentInteractionListener
 import com.goldenmelon.youtv.utils.loadImage
 
 class ContentItemRecyclerViewAdapter(
     private val values: List<Content>,
     private val listener: OnListFragmentInteractionListener?
 ) : RecyclerView.Adapter<ContentItemRecyclerViewAdapter.ViewHolder>() {
-
-    //item click listener
-    private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
-        val item = v.tag as Content
-        // Notify the active callbacks interface (the activity, if the fragment is attached to
-        // one) that an item has been selected.
-        listener?.onItemClick(item)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //create ViewHolder & return ViewHoler
@@ -37,56 +29,68 @@ class ContentItemRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        //set holder
-        holder.binding.item = item
-
-        //set View'Tag & listener(추가 Study: let, run, with, apply, and also)
-        with(holder.binding.root) {
-            //set data in View'tag
-            tag = item
-            setOnClickListener(onClickListener)
+        holder.binding.run {
+            viewModel = ContentViewModel(values[position], listener)
+            executePendingBindings()
         }
-
-        //load thumbnail & display
-        holder.thumbnail.loadImage(item.thumbnail!!, RequestOptions().centerCrop())
-
-        holder.channelThumbnail.visibility = View.GONE
-        item.channelThumbnail?.let {
-            holder.channelThumbnail.visibility = View.VISIBLE
-            holder.channelThumbnail.loadImage(
-                it,
-                RequestOptions().circleCrop()
-            )
-            //channel
-            holder.channelThumbnail.setOnClickListener {
-                listener?.onChannelInItemClick(item)
-            }
-        }
-
-        //check live
-        if (item.lengthText.isNullOrBlank() || item.lengthText == "null") {
-            holder.live.visibility = View.VISIBLE
-        } else {
-            holder.live.visibility = View.INVISIBLE
-        }
-
-        //channel
-        holder.menu.setOnClickListener {
-            listener?.onMenuInItemClick(it, item)
-        }
-
-        //즉시 업데이트
-        holder.binding.executePendingBindings()
     }
 
     override fun getItemCount(): Int = values.size
 
-    inner class ViewHolder(val binding: FragmentContentListItemBinding) :
+    class ViewHolder(val binding: FragmentContentListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val thumbnail: ImageView = binding.itemThumbnail
-        val channelThumbnail: ImageView = binding.itemChannelThumbnail
-        val live: TextView = binding.itemLive
-        val menu: ImageView = binding.itemMenu
+    }
+
+    class ContentViewModel(
+        val item: Content,
+        private val listener: OnListFragmentInteractionListener?
+    ) {
+        fun onItemClick(view: View) {
+            listener?.onItemClick(item)
+        }
+
+        fun onChannelInItemClick(view: View) {
+            listener?.onChannelInItemClick(item)
+        }
+
+        fun onMenuInItemClick(view: View) {
+            listener?.onMenuInItemClick(view, item)
+        }
+
+        var liveVislble = View.VISIBLE
+        var channelVisible  = View.VISIBLE
+
+        init {
+            liveVislble = if (item.lengthText.equals("null")) {
+                View.VISIBLE
+            } else {
+                View.INVISIBLE
+            }
+
+            channelVisible = if (item.channelThumbnail.isNullOrBlank()) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+        }
     }
 }
+
+object BindingAdapter {
+    @JvmStatic
+    @BindingAdapter(value = ["imageUrl", "supportCircle"], requireAll = false)
+    fun loadImage(
+        view: ImageView,
+        url: String?, supportCircle: Boolean = false
+    ) {
+        if(view.visibility == View.VISIBLE) {
+            val requestOptions =
+                if (!supportCircle) RequestOptions().centerInside() else RequestOptions().circleCrop()
+            view.loadImage(url, requestOptions)
+        }
+    }
+}
+
+
+
+
