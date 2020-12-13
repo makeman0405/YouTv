@@ -298,16 +298,19 @@ class MediaService : Service() {
     }
 
     private fun getMediaSource(playContent: PlayContent): MediaSource {
-        var mediaSource: MediaSource =
-            buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality())))
-        if (prefs.getQuality() == Quality.Q_144P_ONLY_VEDIO.intValue || prefs.getQuality() == Quality.Q_240P_ONLY_VEDIO.intValue) {
-            mediaSource = MergingMediaSource(
-                mediaSource,
-                buildMediaSource(Uri.parse(playContent.onlyAudioUrl))
-            )
+        val url = getUrlByQuality(playContent, prefs.getQuality())
+
+        if (url != null) {
+            if (prefs.getQuality() == Quality.Q_144P_ONLY_VEDIO.intValue || prefs.getQuality() == Quality.Q_240P_ONLY_VEDIO.intValue) {
+                return MergingMediaSource(
+                    buildMediaSource(Uri.parse(url)),
+                    buildMediaSource(Uri.parse(playContent.onlyAudioUrl))
+                )
+            }
+            return buildMediaSource(Uri.parse(url))
         }
 
-        return mediaSource
+        return buildMediaSource(Uri.parse(playContent.urls!![0].url))
     }
 
     private fun createControlBoxNotification(): Notification? {
