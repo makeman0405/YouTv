@@ -78,6 +78,9 @@ class PlayerActivity : AppCompatActivity() {
                 MediaService.ACTION_QUIT -> {
                     finish()
                 }
+                MediaService.ACTION_STATE_READY -> {
+                    dismissLoadingPopup()
+                }
             }
         }
     }
@@ -190,6 +193,7 @@ class PlayerActivity : AppCompatActivity() {
         registerReceiver(br, IntentFilter().apply {
             addAction(MediaService.ACTION_PLAY)
             addAction(MediaService.ACTION_QUIT)
+            addAction(MediaService.ACTION_STATE_READY)
         })
     }
 
@@ -266,6 +270,14 @@ class PlayerActivity : AppCompatActivity() {
             .create().also {
                 it.show()
             }
+    }
+
+    fun showLoadingPopup() {
+        binding.centerLoading.visibility = View.VISIBLE
+    }
+
+    fun dismissLoadingPopup() {
+        binding.centerLoading.visibility = View.GONE
     }
 
     companion object {

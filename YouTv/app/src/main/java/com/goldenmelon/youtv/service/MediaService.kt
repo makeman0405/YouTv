@@ -187,6 +187,9 @@ class MediaService : Service() {
                 addListener(object : Player.EventListener {
                     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                         startForeground(1, createControlBoxNotification())
+                        if (playbackState == Player.STATE_READY) {
+                            sendBroadcast(Intent(ACTION_STATE_READY))
+                        }
                     }
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -464,6 +467,8 @@ class MediaService : Service() {
         const val ACTION_QUIT = "chutube.intent.action.YOUTUBE_QUIT"
 
         const val ACTION_UPDATE_PLAY_UI = "chutube.intent.action.YOUTUBE_UPDATE_PLAY_UI"
+
+        const val ACTION_STATE_READY = "chutube.intent.action.YOUTUBE_STATE_READY"
 
         var isRunning = false
             private set
