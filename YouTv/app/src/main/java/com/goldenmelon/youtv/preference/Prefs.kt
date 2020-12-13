@@ -1,9 +1,12 @@
 package com.goldenmelon.youtv.preference
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.PointF
 import com.goldenmelon.youtv.datas.PlayContent
+import com.goldenmelon.youtv.utils.Quality
 import com.google.gson.Gson
+
 
 class Prefs(context: Context) {
     private val sharedPreferences by lazy {
@@ -56,9 +59,18 @@ class Prefs(context: Context) {
         sharedPreferences.edit().putString(PREF_LATEST_SEARCH_WORD, word).apply()
     }
 
+    fun getQuality(): Int {
+        return sharedPreferences.getInt(PREF_QUALITY, Quality.Q_360P.intValue)
+    }
+
+    fun setQuality(quality: Quality) {
+        sharedPreferences.edit().putInt(PREF_QUALITY, quality.intValue).apply()
+    }
+
     companion object {
         private const val PREF_PLAYCONTENT = "pref_playcontent"
         private const val PREF_SHORTCUT_POSITION = "pref_shortcut_position"
         private const val PREF_LATEST_SEARCH_WORD = "pref_latest_search_word"
+        private const val PREF_QUALITY = "pref_quality"
     }
 }

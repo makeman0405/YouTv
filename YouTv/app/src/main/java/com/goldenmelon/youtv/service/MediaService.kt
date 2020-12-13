@@ -18,8 +18,10 @@ import com.bumptech.glide.request.target.NotificationTarget
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.datas.PlayContent
+import com.goldenmelon.youtv.datas.PlayUrl
 import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
+import com.goldenmelon.youtv.utils.Quality
 import com.goldenmelon.youtv.utils.isNetworkAvailable
 import com.goldenmelon.youtv.utils.isWIFIConnected
 import com.google.android.exoplayer2.*
@@ -35,10 +37,9 @@ class MediaService : Service() {
 
     private val binder = MediaBinder()
 
-    //preference
-    val prefs: Prefs by lazy {
-        App.prefs!!
-    }
+    //preference Quality
+    val prefs = App.prefs!!
+    var currentQuality: Int = prefs.getQuality()
 
     private var currentPlayContent:
             PlayContent? by Delegates.observable(null,
@@ -91,7 +92,7 @@ class MediaService : Service() {
         }
 
         override fun onLost(network: Network?) {
-           //nothing
+            //nothing
         }
     }
 
@@ -202,7 +203,7 @@ class MediaService : Service() {
                     override fun onPlayerError(error: ExoPlaybackException) {
                         super.onPlayerError(error)
 
-                        if(isNetworkAvailable(applicationContext)) {
+                        if (isNetworkAvailable(applicationContext)) {
                             Toast.makeText(
                                 applicationContext,
                                 "Playback Error: An error has occurred(${error.type})",
@@ -244,33 +245,58 @@ class MediaService : Service() {
         }
     }
 
-    //control
-    public fun load(playContent: PlayContent?) {
+    fun load(playContent: PlayContent) {
         // load
-        if (currentPlayContent?.videoId.equals(playContent?.videoId)) {
+        if (currentPlayContent?.videoId.equals(playContent.videoId)) {
             //no playing
             if (!isPlaying()) {
-                //url
-                player?.prepare(buildMediaSource(Uri.parse(playContent?.url)), false, true)
+                player?.prepare(
+                    buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality()))),
+                    false,
+                    true
+                )
 
-                // playing
                 play()
 
-                //update
                 currentPlayContent = playContent
             }
         } else {
-            //url
-            player?.let {
-                //it.seekTo(0, 0L)
-                it.prepare(buildMediaSource(Uri.parse(playContent?.url)), true, true)
+            player?.run {
+                prepare(buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality()))))
             }
 
-            //play
             play()
 
-            //update
             currentPlayContent = playContent
+        }
+
+        currentQuality = prefs.getQuality()
+    }
+
+    fun changeQuality() {
+        if (currentQuality != prefs.getQuality()) {
+            player?.run {
+                currentPlayContent?.let {
+                    prepare(
+                        buildMediaSource(Uri.parse(getUrlByQuality(it, prefs.getQuality()))),
+                        false,
+                        true
+                    )
+                    if (isPlaying) play()
+                }
+            }
+            currentQuality = prefs.getQuality()
+        }
+    }
+
+    private fun getUrlByQuality(content: PlayContent, quality: Int): String? {
+        val url = content.urls?.find {
+            it.quality == quality
+        }?.url
+
+        return url ?: content.urls?.run {
+            if (size > 0) get(0).url
+            else null
         }
     }
 
@@ -366,8 +392,7 @@ class MediaService : Service() {
             .apply(RequestOptions().centerCrop())
             .into(
                 NotificationTarget(
-                    this, R.id.icon, remoteViews
-                    , notification, 1
+                    this, R.id.icon, remoteViews, notification, 1
                 )
             )
 
@@ -382,7 +407,8 @@ class MediaService : Service() {
     public fun isPlaying(): Boolean {
         var result = false
         player?.let {
-            result = it.playWhenReady && (it.playbackState != ExoPlayer.STATE_IDLE && it.playbackState != ExoPlayer.STATE_ENDED)
+            result =
+                it.playWhenReady && (it.playbackState != ExoPlayer.STATE_IDLE && it.playbackState != ExoPlayer.STATE_ENDED)
         }
         return result
     }
