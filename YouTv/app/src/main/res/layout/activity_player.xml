@@ -53,22 +53,42 @@
             android:src="@drawable/baseline_share_white_24" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/fullscreen_layout"
+    <LinearLayout
+        android:id="@+id/settings_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="#A6000000"
+        android:orientation="horizontal"
         android:visibility="invisible"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/video_bar">
 
-        <ImageView
-            android:id="@+id/fullscreen"
-            android:layout_width="35dp"
+        <TextView
+            android:id="@+id/quality"
+            android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:src="@drawable/exo_controls_fullscreen_enter" />
+            android:layout_marginRight="16dp"
+            android:background="#A6000000"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:src="@drawable/exo_controls_fullscreen_enter"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#A6000000">
+
+            <ImageView
+                android:id="@+id/fullscreen"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/exo_controls_fullscreen_enter" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

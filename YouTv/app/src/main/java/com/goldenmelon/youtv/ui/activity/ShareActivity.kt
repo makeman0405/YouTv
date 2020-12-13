@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.SparseArray
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.util.forEach
 import at.huber.youtubeExtractor.VideoMeta
 import at.huber.youtubeExtractor.YouTubeExtractor
 import at.huber.youtubeExtractor.YtFile
 import com.goldenmelon.youtv.datas.PlayContent
+import com.goldenmelon.youtv.datas.PlayUrl
 import com.goldenmelon.youtv.utils.SUPPORT_ITAG_LIST
 
 class ShareActivity : AppCompatActivity() {
@@ -35,19 +37,25 @@ class ShareActivity : AppCompatActivity() {
                 vMeta: VideoMeta
             ) {
                 var isSuccess = false
-                for (itag in SUPPORT_ITAG_LIST) {
-                    if (ytFiles != null && ytFiles[itag] != null) {
+                if (ytFiles != null && vMeta != null) {
+                    val playUrls = mutableListOf<PlayUrl>()
+
+                    ytFiles.forEach { key, value ->
+                        if (SUPPORT_ITAG_LIST.contains(value.format.itag)) {
+                            playUrls.add(PlayUrl(value.format.height, value.url))
+                        }
+                    }
+
+                    if (playUrls.isNotEmpty()) {
                         PlayerActivity.startActivity(
                             tempContext, PlayContent(
                                 vMeta.videoId,
                                 vMeta.title,
                                 vMeta.hqImageUrl ?: vMeta.thumbUrl,
-                                ytFiles[itag].url
+                                playUrls
                             )
                         )
-
                         isSuccess = true
-                        break
                     }
                 }
 

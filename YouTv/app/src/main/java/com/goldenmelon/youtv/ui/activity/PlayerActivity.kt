@@ -6,13 +6,18 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.goldenmelon.youtv.R
+import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.databinding.ActivityPlayerBinding
 import com.goldenmelon.youtv.datas.PlayContent
+import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.service.MediaService
+import com.goldenmelon.youtv.utils.Quality
 import com.goldenmelon.youtv.utils.shareContent
 import com.google.android.exoplayer2.Player
+
 
 class PlayerActivity : AppCompatActivity() {
     //Dash URL Test
@@ -20,11 +25,19 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
-    private val playContent: PlayContent? by lazy {
+    private val playContent: PlayContent by lazy {
         intent.getParcelableExtra<PlayContent>("playContent")
     }
 
     private var isFullScreen = false
+
+    //preference
+    val prefs: Prefs by lazy {
+        App.prefs!!
+    }
+
+    //해상도 선택 지
+    private var qualitySelectPopup: AlertDialog? = null
 
     //MediaService
     private var mBound: Boolean = false
@@ -97,16 +110,16 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        unregisterReceiver(br)
+        unRegisterReceivers()
         super.onStop()
     }
 
     private fun initUi() {
-        binding.videoTitle.text = playContent?.title ?: ""
+        binding.videoTitle.text = playContent.title ?: ""
 
         binding.share.setOnClickListener { _ ->
             //share
-            playContent?.let {
+            playContent.let {
                 shareContent(this, it.videoId)
             }
         }
@@ -126,11 +139,18 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.videoView.setControllerVisibilityListener {
             binding.videoBar.visibility = it
-            binding.fullscreenLayout.visibility = it
+            binding.settingsLayout.visibility = it
 
             //Fixed Bug - VideoView Controller 가 사라질때 FullScreen 인 경우 사용에 의해 나타난 상태바와 소프트키를 사라지도록함.
             if (it != View.VISIBLE && isFullScreen) {
                 hideSystemUI()
+            }
+        }
+
+        binding.quality.run {
+            text = Quality.getStringValue(prefs.getQuality())
+            setOnClickListener {
+                showQualityPopup()
             }
         }
     }
@@ -142,7 +162,7 @@ class PlayerActivity : AppCompatActivity() {
             } else {
                 startService(intent)
             }
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            bindService(intent, connection, BIND_AUTO_CREATE)
         }
 
     }
@@ -171,6 +191,10 @@ class PlayerActivity : AppCompatActivity() {
             addAction(MediaService.ACTION_PLAY)
             addAction(MediaService.ACTION_QUIT)
         })
+    }
+
+    private fun unRegisterReceivers() {
+        unregisterReceiver(br)
     }
 
     override fun onBackPressed() {
@@ -213,10 +237,41 @@ class PlayerActivity : AppCompatActivity() {
         //window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
+    private fun showQualityPopup() {
+        qualitySelectPopup?.run {
+            if (isShowing) dismiss()
+        }
+
+        val items = Quality.values().map {
+            it.stringValue
+        }.toTypedArray()
+
+        qualitySelectPopup = AlertDialog.Builder(this)
+            .setItems(
+                items
+            ) { _, i ->
+                if( Quality.values()[i].intValue != prefs.getQuality()) {
+                    //changed
+                    binding.quality.text = Quality.values()[i].stringValue
+                    prefs.setQuality(Quality.values()[i])
+                    serviceRef?.changeQuality()
+                }
+            }
+            .setTitle(
+                getString(
+                    R.string.popup_title_qualitys,
+                    Quality.getStringValue(prefs.getQuality())
+                )
+            )
+            .create().also {
+                it.show()
+            }
+    }
+
     companion object {
         const val TAG = "PlayerActivity"
 
-        public fun startActivity(context: Context, playContent: PlayContent) {
+        fun startActivity(context: Context, playContent: PlayContent) {
             val intent = Intent(
                 context,
                 PlayerActivity::class.java
