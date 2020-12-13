@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.net.*
 import android.os.*
 import com.google.android.exoplayer2.audio.AudioAttributes
-
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -18,14 +17,12 @@ import com.bumptech.glide.request.target.NotificationTarget
 import com.goldenmelon.youtv.R
 import com.goldenmelon.youtv.application.App
 import com.goldenmelon.youtv.datas.PlayContent
-import com.goldenmelon.youtv.datas.PlayUrl
-import com.goldenmelon.youtv.preference.Prefs
 import com.goldenmelon.youtv.ui.activity.PlayerActivity
 import com.goldenmelon.youtv.utils.Quality
 import com.goldenmelon.youtv.utils.isNetworkAvailable
-import com.goldenmelon.youtv.utils.isWIFIConnected
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import kotlin.properties.Delegates
@@ -251,7 +248,7 @@ class MediaService : Service() {
             //no playing
             if (!isPlaying()) {
                 player?.prepare(
-                    buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality()))),
+                    getMediaSource(playContent),
                     false,
                     true
                 )
@@ -262,7 +259,9 @@ class MediaService : Service() {
             }
         } else {
             player?.run {
-                prepare(buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality()))))
+                prepare(
+                    getMediaSource(playContent)
+                )
             }
 
             play()
@@ -278,7 +277,7 @@ class MediaService : Service() {
             player?.run {
                 currentPlayContent?.let {
                     prepare(
-                        buildMediaSource(Uri.parse(getUrlByQuality(it, prefs.getQuality()))),
+                        getMediaSource(it),
                         false,
                         true
                     )
@@ -290,14 +289,22 @@ class MediaService : Service() {
     }
 
     private fun getUrlByQuality(content: PlayContent, quality: Int): String? {
-        val url = content.urls?.find {
+        return content.urls?.find {
             it.quality == quality
         }?.url
+    }
 
-        return url ?: content.urls?.run {
-            if (size > 0) get(0).url
-            else null
+    private fun getMediaSource(playContent: PlayContent): MediaSource {
+        var mediaSource: MediaSource =
+            buildMediaSource(Uri.parse(getUrlByQuality(playContent, prefs.getQuality())))
+        if (prefs.getQuality() == Quality.Q_144P_ONLY_VEDIO.intValue || prefs.getQuality() == Quality.Q_240P_ONLY_VEDIO.intValue) {
+            mediaSource = MergingMediaSource(
+                mediaSource,
+                buildMediaSource(Uri.parse(playContent.onlyAudioUrl))
+            )
         }
+
+        return mediaSource
     }
 
     private fun createControlBoxNotification(): Notification? {

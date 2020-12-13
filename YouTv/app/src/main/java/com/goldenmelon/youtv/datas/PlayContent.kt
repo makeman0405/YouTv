@@ -7,13 +7,15 @@ data class PlayContent(
     val videoId: String?,
     val title: String?,
     val thumbUrl: String?,
-    val urls: List<PlayUrl>?
+    val urls: List<PlayUrl>?,
+    val onlyAudioUrl:String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.createTypedArrayList(PlayUrl)
+        parcel.createTypedArrayList(PlayUrl),
+        parcel.readString()
     ) {
     }
 
@@ -22,6 +24,7 @@ data class PlayContent(
         parcel.writeString(title)
         parcel.writeString(thumbUrl)
         parcel.writeTypedList(urls)
+        parcel.writeString(onlyAudioUrl)
     }
 
     override fun describeContents(): Int {

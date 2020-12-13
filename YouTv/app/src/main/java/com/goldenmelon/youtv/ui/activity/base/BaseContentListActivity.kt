@@ -185,10 +185,15 @@ open class BaseContentListActivity : AppCompatActivity(),
                 var isSuccess = false
                 if (ytFiles != null && vMeta != null) {
                     val playUrls = mutableListOf<PlayUrl>()
+                    var onlyAudioUrl: String? = null
 
                     ytFiles.forEach { key, value ->
                         if (SUPPORT_ITAG_LIST.contains(value.format.itag)) {
                             playUrls.add(PlayUrl(value.format.height, value.url))
+                        }
+
+                        if (value.format.itag == SUPPORT_ITAG_ONLY_AUDIO) {
+                            onlyAudioUrl = value.url
                         }
                     }
 
@@ -198,7 +203,8 @@ open class BaseContentListActivity : AppCompatActivity(),
                                 vMeta.videoId,
                                 vMeta.title,
                                 vMeta.hqImageUrl ?: vMeta.thumbUrl,
-                                playUrls
+                                playUrls,
+                                onlyAudioUrl
                             )
                         )
                         isSuccess = true

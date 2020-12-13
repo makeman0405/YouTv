@@ -113,11 +113,13 @@ fun convertPixelsToDp(px: Float, context: Context?): Float {
 }
 
 //not dash
-//160(144) 133(240), 18(360), 22(720)
-val SUPPORT_ITAG_LIST = listOf(160, 133, 18, 22)
+//278(144) 242(240) webm
+//160(144) 133(240), 18(360), 22(720) mp4
+val SUPPORT_ITAG_LIST = listOf(278, 242, 18, 22)
+var SUPPORT_ITAG_ONLY_AUDIO = 249
 
 enum class Quality(val stringValue: String, val intValue: Int) {
-    Q_144P("144P", 144), Q_240P("240P", 240), Q_360P("360P", 360), Q_720P("720P", 720);
+    Q_144P_ONLY_VEDIO("144P", 144), Q_240P_ONLY_VEDIO("240P", 240), Q_360P("360P", 360), Q_720P("720P", 720);
 
     companion object {
         fun getStringValue(intValue: Int):String? {
