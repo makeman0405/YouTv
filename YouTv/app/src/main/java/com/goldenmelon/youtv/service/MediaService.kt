@@ -250,6 +250,7 @@ class MediaService : Service() {
         if (currentPlayContent?.videoId.equals(playContent.videoId)) {
             //no playing
             if (!isPlaying()) {
+                sendBroadcast(Intent(ACTION_STATE_PREPARE))
                 player?.prepare(
                     getMediaSource(playContent),
                     false,
@@ -261,6 +262,7 @@ class MediaService : Service() {
                 currentPlayContent = playContent
             }
         } else {
+            sendBroadcast(Intent(ACTION_STATE_PREPARE))
             player?.run {
                 prepare(
                     getMediaSource(playContent)
@@ -471,6 +473,7 @@ class MediaService : Service() {
 
         const val ACTION_UPDATE_PLAY_UI = "chutube.intent.action.YOUTUBE_UPDATE_PLAY_UI"
 
+        const val ACTION_STATE_PREPARE = "chutube.intent.action.YOUTUBE_STATE_PREPARE"
         const val ACTION_STATE_READY = "chutube.intent.action.YOUTUBE_STATE_READY"
 
         var isRunning = false

@@ -78,6 +78,9 @@ class PlayerActivity : AppCompatActivity() {
                 MediaService.ACTION_QUIT -> {
                     finish()
                 }
+                MediaService.ACTION_STATE_PREPARE -> {
+                    showLoadingPopup()
+                }
                 MediaService.ACTION_STATE_READY -> {
                     dismissLoadingPopup()
                 }
@@ -193,6 +196,7 @@ class PlayerActivity : AppCompatActivity() {
         registerReceiver(br, IntentFilter().apply {
             addAction(MediaService.ACTION_PLAY)
             addAction(MediaService.ACTION_QUIT)
+            addAction(MediaService.ACTION_STATE_PREPARE)
             addAction(MediaService.ACTION_STATE_READY)
         })
     }
