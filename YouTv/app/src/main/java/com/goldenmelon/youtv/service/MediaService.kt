@@ -190,6 +190,9 @@ class MediaService : Service() {
                         if (playbackState == Player.STATE_READY) {
                             sendBroadcast(Intent(ACTION_STATE_READY))
                         }
+                        if (playbackState == Player.STATE_ENDED) {
+                            sendBroadcast(Intent(ACTION_STATE_ENDED))
+                        }
                     }
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -475,6 +478,7 @@ class MediaService : Service() {
 
         const val ACTION_STATE_PREPARE = "chutube.intent.action.YOUTUBE_STATE_PREPARE"
         const val ACTION_STATE_READY = "chutube.intent.action.YOUTUBE_STATE_READY"
+        const val ACTION_STATE_ENDED = "chutube.intent.action.YOUTUBE_STATE_ENDED"
 
         var isRunning = false
             private set

@@ -84,6 +84,9 @@ class PlayerActivity : AppCompatActivity() {
                 MediaService.ACTION_STATE_READY -> {
                     dismissLoadingPopup()
                 }
+                MediaService.ACTION_STATE_ENDED -> {
+                    dismissLoadingPopup()
+                }
             }
         }
     }
@@ -198,6 +201,7 @@ class PlayerActivity : AppCompatActivity() {
             addAction(MediaService.ACTION_QUIT)
             addAction(MediaService.ACTION_STATE_PREPARE)
             addAction(MediaService.ACTION_STATE_READY)
+            addAction(MediaService.ACTION_STATE_ENDED)
         })
     }
 
