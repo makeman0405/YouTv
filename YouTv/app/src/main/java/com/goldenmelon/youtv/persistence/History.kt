@@ -10,7 +10,7 @@ import java.util.* //Date
 @Entity
 data class History private constructor(
     @PrimaryKey
-    val videoId: String,
+    @ColumnInfo(name = "video_id") val videoId: String,
 
     @ColumnInfo(name = "thumbnail") val thumbnail: String?,
     @ColumnInfo(name = "title") val title: String?,
