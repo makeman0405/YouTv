@@ -1,7 +1,8 @@
-package com.goldenmelon.youtv.persistence
+package com.goldenmelon.youtv.persistence.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.goldenmelon.youtv.persistence.entity.History
 
 @Dao
 interface HistoryDao {

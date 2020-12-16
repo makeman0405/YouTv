@@ -1,8 +1,7 @@
-package com.goldenmelon.youtv.persistence
+package com.goldenmelon.youtv.persistence.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.goldenmelon.youtv.datas.Content
 import java.util.* //Date
