@@ -1,11 +1,12 @@
 package com.goldenmelon.youtv.persistence
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
 interface HistoryDao {
     @Query("SELECT * FROM history ORDER BY date DESC")
-    fun getAll(): List<History>
+    fun getAll(): LiveData<List<History>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(history: History)
