@@ -1,2 +1,3 @@
+include ':youtubeExtractor'
 rootProject.name='ChuYouTube'
 include ':app'
