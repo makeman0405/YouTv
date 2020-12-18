@@ -7,7 +7,7 @@ import com.goldenmelon.youtv.datas.Content
 import java.util.* //Date
 
 @Entity
-data class History private constructor(
+data class History constructor(
     @PrimaryKey
     @ColumnInfo(name = "video_id") val videoId: String,
 
